@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GST Calculator</title>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #1a2733;
+    --muted: #5b6b7a;
+    --border: #d9e0e6;
+    --accent: #0b7285;
+    --accent-soft: #e3f2f4;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12181d;
+      --card: #1b2429;
+      --text: #e6edf1;
+      --muted: #9aacb8;
+      --border: #2c3740;
+      --accent: #38b6c9;
+      --accent-soft: #14323a;
+      --shadow: 0 2px 12px rgba(0,0,0,0.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+    min-height: 100vh;
+  }
+  .app {
+    width: 100%;
+    max-width: 460px;
+  }
+  h1 {
+    font-size: 1.4rem;
+    margin: 0 0 4px;
+  }
+  p.sub {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  input[type="number"] {
+    width: 100%;
+    padding: 11px 12px;
+    font-size: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--bg);
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  input[type="number"]:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .seg {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .seg button {
+    flex: 1;
+    padding: 9px 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .seg button.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .rates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .rates button {
+    padding: 7px 14px;
+    font-size: 0.88rem;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  .rates button.active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .rate-custom {
+    width: 84px !important;
+    margin-bottom: 18px !important;
+  }
+  .result {
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+  }
+  .row .k { color: var(--muted); }
+  .row .v { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .row.split .v { font-weight: 500; font-size: 0.9rem; }
+  .row.total {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    font-size: 1.15rem;
+  }
+  .row.total .v { color: var(--accent); font-weight: 800; }
+  footer {
+    margin-top: 16px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>GST Calculator</h1>
+  <p class="sub">Add or remove GST from an amount.</p>
+  <div class="card">
+    <label for="amount">Amount (₹)</label>
+    <input type="number" id="amount" inputmode="decimal" min="0" step="any" placeholder="0.00" value="1000">
+
+    <label>Mode</label>
+    <div class="seg" id="mode">
+      <button data-mode="add" class="active">Add GST</button>
+      <button data-mode="remove">Remove GST</button>
+    </div>
+
+    <label>GST Rate</label>
+    <div class="rates" id="rates">
+      <button data-rate="3">3%</button>
+      <button data-rate="5">5%</button>
+      <button data-rate="12">12%</button>
+      <button data-rate="18" class="active">18%</button>
+      <button data-rate="28">28%</button>
+    </div>
+    <label for="customRate">Custom rate (%)</label>
+    <input type="number" id="customRate" class="rate-custom" inputmode="decimal" min="0" step="any" placeholder="—">
+
+    <div class="result" id="result"></div>
+  </div>
+  <footer>Intra-state split shown as CGST + SGST (half each). Figures rounded to 2 decimals.</footer>
+</div>
+
+<script>
+(function () {
+  var state = { mode: "add", rate: 18 };
+
+  var amountEl = document.getElementById("amount");
+  var customEl = document.getElementById("customRate");
+  var modeWrap = document.getElementById("mode");
+  var ratesWrap = document.getElementById("rates");
+  var resultEl = document.getElementById("result");
+
+  function money(n) {
+    if (!isFinite(n)) n = 0;
+    return "₹" + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function calc() {
+    var amt = parseFloat(amountEl.value) || 0;
+    var rate = state.rate || 0;
+    var base, gst, total;
+
+    if (state.mode === "add") {
+      base = amt;
+      gst = amt * rate / 100;
+      total = base + gst;
+    } else {
+      total = amt;
+      base = amt / (1 + rate / 100);
+      gst = total - base;
+    }
+
+    var half = gst / 2;
+    resultEl.innerHTML =
+      row("Base amount", money(base)) +
+      row("GST @ " + rate + "%", money(gst)) +
+      row("CGST", money(half), "split") +
+      row("SGST", money(half), "split") +
+      row("Total amount", money(total), "total");
+  }
+
+  function row(k, v, cls) {
+    return '<div class="row ' + (cls || "") + '"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+  }
+
+  modeWrap.addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    state.mode = b.dataset.mode;
+    [].forEach.call(modeWrap.children, function (c) { c.classList.toggle("active", c === b); });
+    calc();
+  });
+
+  ratesWrap.addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    state.rate = parseFloat(b.dataset.rate);
+    customEl.value = "";
+    [].forEach.call(ratesWrap.children, function (c) { c.classList.toggle("active", c === b); });
+    calc();
+  });
+
+  customEl.addEventListener("input", function () {
+    var v = parseFloat(customEl.value);
+    if (isFinite(v) && v >= 0) {
+      state.rate = v;
+      [].forEach.call(ratesWrap.children, function (c) { c.classList.remove("active"); });
+    }
+    calc();
+  });
+
+  amountEl.addEventListener("input", calc);
+  calc();
+})();
+</script>
+</body>
+</html>
