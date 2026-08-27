@@ -85,26 +85,33 @@ export function AmountField({ value, onChange, onClear, error }: AmountFieldProp
   );
 
   const hasError = Boolean(error) && value !== "";
+  const filled = value !== "";
 
   return (
     <div>
       <label
         htmlFor={inputId}
-        className="mb-2 block px-1 text-xs font-semibold uppercase tracking-wide text-muted"
+        className="mb-2 block px-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted"
       >
         Amount
       </label>
 
       <div
         className={cn(
-          "flex items-center gap-2 rounded-control border bg-surface pl-4 pr-2 transition-colors",
-          "focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15",
-          hasError ? "border-danger" : "border-line-strong",
+          "flex items-center gap-2 rounded-control border bg-surface pl-4 pr-2",
+          "transition-[border-color,box-shadow] duration-150 ease-out",
+          "focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/20",
+          hasError
+            ? "border-danger focus-within:ring-danger/20"
+            : "border-line-strong",
         )}
       >
         <span
           aria-hidden="true"
-          className="shrink-0 font-mono text-2xl text-muted sm:text-3xl"
+          className={cn(
+            "shrink-0 font-mono text-2xl transition-colors duration-150 sm:text-3xl",
+            filled ? "text-text" : "text-muted",
+          )}
         >
           ₹
         </span>
@@ -125,25 +132,31 @@ export function AmountField({ value, onChange, onClear, error }: AmountFieldProp
           aria-describedby={hasError ? errorId : undefined}
           className={cn(
             "w-full min-w-0 bg-transparent py-4 font-mono text-3xl tabular-nums tracking-tight text-text outline-none",
-            "placeholder:text-muted/50 sm:text-4xl",
+            "placeholder:text-muted/40 sm:text-4xl",
           )}
         />
-        {value !== "" && (
-          <button
-            type="button"
-            onClick={clearAndFocus}
-            aria-label="Clear amount"
-            className="flex size-9 shrink-0 items-center justify-center rounded-pill text-muted transition-colors hover:bg-surface-sunken hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-          >
-            <X className="size-4" aria-hidden="true" />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={clearAndFocus}
+          aria-label="Clear amount"
+          aria-hidden={!filled}
+          tabIndex={filled ? 0 : -1}
+          className={cn(
+            "flex size-9 shrink-0 items-center justify-center rounded-pill text-muted",
+            "transition-[opacity,color,background-color,transform] duration-150 ease-out",
+            "hover:bg-surface-sunken hover:text-text active:scale-95",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            filled ? "opacity-100" : "pointer-events-none opacity-0",
+          )}
+        >
+          <X className="size-4" aria-hidden="true" />
+        </button>
       </div>
 
       <p
         id={errorId}
         role={hasError ? "alert" : undefined}
-        className="min-h-5 px-1 pt-1.5 text-xs text-danger"
+        className="min-h-5 px-1 pt-1.5 text-xs text-danger motion-safe:transition-opacity"
       >
         {hasError ? error : null}
       </p>

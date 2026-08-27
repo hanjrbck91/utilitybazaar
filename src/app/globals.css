@@ -3,25 +3,29 @@
 /* ------------------------------------------------------------------ *
  * Design tokens
  * Raw palette lives on :root (with a dark override); the @theme block
- * maps it onto Tailwind's color / shadow / radius scales.
+ * maps it onto Tailwind's color / shadow / radius / animation scales.
  * ------------------------------------------------------------------ */
 :root {
   --p-bg: #fbfaf8;
   --p-surface: #ffffff;
   --p-surface-sunken: #f4f2ee;
   --p-line: #e7e3dc;
-  --p-line-strong: #d8d3ca;
+  --p-line-strong: #d6d0c6;
   --p-text: #1b1d1e;
-  --p-muted: #6b7177;
+  --p-muted: #666c72;
   --p-accent: #0f9d74;
+  /* Text-safe accent: >=4.5:1 on surface, sunken and accent-soft. */
+  --p-accent-strong: #0b7a5a;
   --p-accent-hover: #0c8a65;
   --p-accent-contrast: #ffffff;
   --p-accent-soft: #e6f5ef;
+  --p-accent-line: #b9e2d3;
   --p-danger: #c9453f;
   --p-danger-soft: #fbebea;
 
-  --p-shadow-card: 0 1px 2px rgba(20, 28, 24, 0.05), 0 22px 44px -26px rgba(20, 28, 24, 0.22);
-  --p-shadow-raise: 0 1px 2px rgba(20, 28, 24, 0.06), 0 10px 24px -12px rgba(20, 28, 24, 0.16);
+  --p-shadow-card: 0 1px 2px rgba(20, 28, 24, 0.05), 0 22px 44px -26px rgba(20, 28, 24, 0.2);
+  --p-shadow-raise: 0 1px 2px rgba(20, 28, 24, 0.05), 0 10px 22px -12px rgba(20, 28, 24, 0.14);
+  --p-shadow-inset: inset 0 1px 2px rgba(20, 28, 24, 0.05);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,18 +34,21 @@
     --p-surface: #171a1c;
     --p-surface-sunken: #10191b;
     --p-line: #2a2f31;
-    --p-line-strong: #383e41;
+    --p-line-strong: #3a4043;
     --p-text: #f1f0ee;
     --p-muted: #9aa1a6;
     --p-accent: #2dd4a7;
+    --p-accent-strong: #2dd4a7;
     --p-accent-hover: #45dcb3;
     --p-accent-contrast: #05231b;
-    --p-accent-soft: #143029;
+    --p-accent-soft: #17392f;
+    --p-accent-line: #2f5f52;
     --p-danger: #f0817f;
     --p-danger-soft: #2b1b1b;
 
-    --p-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 26px 50px -30px rgba(0, 0, 0, 0.6);
-    --p-shadow-raise: 0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 26px -14px rgba(0, 0, 0, 0.5);
+    --p-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 26px 50px -30px rgba(0, 0, 0, 0.6);
+    --p-shadow-raise: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 26px -14px rgba(0, 0, 0, 0.5);
+    --p-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -54,21 +61,47 @@
   --color-text: var(--p-text);
   --color-muted: var(--p-muted);
   --color-accent: var(--p-accent);
+  --color-accent-strong: var(--p-accent-strong);
   --color-accent-hover: var(--p-accent-hover);
   --color-accent-contrast: var(--p-accent-contrast);
   --color-accent-soft: var(--p-accent-soft);
+  --color-accent-line: var(--p-accent-line);
   --color-danger: var(--p-danger);
   --color-danger-soft: var(--p-danger-soft);
 
   --shadow-card: var(--p-shadow-card);
   --shadow-raise: var(--p-shadow-raise);
+  --shadow-inset: var(--p-shadow-inset);
 
   --radius-card: 20px;
-  --radius-control: 12px;
+  --radius-control: 13px;
   --radius-pill: 999px;
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --animate-result-pop: result-pop 0.18s ease-out;
+  --animate-fade-in: fade-in 0.16s ease-out;
+}
+
+@keyframes result-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 html {
@@ -81,6 +114,10 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--p-accent) 24%, transparent);
 }
 
 /* Kill number-spinner artefacts on the amount field (it is type="text"). */

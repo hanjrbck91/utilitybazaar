@@ -58,7 +58,7 @@ export function Calculator() {
   return (
     <section
       aria-label="GST calculator"
-      className="rounded-card border border-line bg-surface p-4 shadow-card sm:p-6"
+      className="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6"
     >
       <div className="space-y-5">
         <AmountField
@@ -93,7 +93,9 @@ export function Calculator() {
           value={taxType}
           onChange={setTaxType}
         />
+      </div>
 
+      <div className="mt-6">
         <ResultCard breakdown={breakdown} />
       </div>
     </section>

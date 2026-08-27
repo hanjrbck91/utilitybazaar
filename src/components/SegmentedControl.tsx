@@ -31,7 +31,7 @@ export function SegmentedControl<T extends string>({
 }: SegmentedControlProps<T>) {
   return (
     <fieldset>
-      <legend className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-muted">
+      <legend className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted">
         {legend}
       </legend>
       <div className="grid grid-flow-col auto-cols-fr gap-1 rounded-control border border-line bg-surface-sunken p-1">
@@ -41,9 +41,12 @@ export function SegmentedControl<T extends string>({
             <label
               key={option.value}
               className={cn(
-                "relative flex min-w-0 cursor-pointer select-none items-center justify-center rounded-[9px] px-3 py-2.5 text-center text-sm font-medium transition-colors duration-150",
+                "relative flex min-w-0 cursor-pointer select-none items-center justify-center rounded-[10px] px-3 py-2.5 text-center text-sm transition-[color,background-color,box-shadow,transform] duration-150 ease-out",
+                "active:scale-[0.98]",
                 "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
-                checked ? "bg-surface text-text shadow-raise" : "text-muted hover:text-text",
+                checked
+                  ? "bg-surface font-semibold text-text shadow-raise"
+                  : "font-medium text-muted hover:text-text",
               )}
             >
               <input

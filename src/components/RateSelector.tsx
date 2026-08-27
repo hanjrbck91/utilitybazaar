@@ -25,6 +25,14 @@ function sanitizeRate(input: string): string {
   return s;
 }
 
+const CHIP_BASE =
+  "cursor-pointer select-none rounded-pill border px-4 py-2.5 text-sm tabular-nums " +
+  "transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.96] " +
+  "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent";
+
+const CHIP_ON = "border-accent bg-accent-soft font-semibold text-accent-strong";
+const CHIP_OFF = "border-line-strong font-medium text-muted hover:border-muted/50 hover:text-text";
+
 export function RateSelector({
   presets,
   selection,
@@ -45,7 +53,7 @@ export function RateSelector({
 
   return (
     <fieldset>
-      <legend className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-muted">
+      <legend className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted">
         GST rate
       </legend>
 
@@ -53,16 +61,7 @@ export function RateSelector({
         {presets.map((rate) => {
           const checked = selection === rate;
           return (
-            <label
-              key={rate}
-              className={cn(
-                "cursor-pointer select-none rounded-pill border px-4 py-2.5 text-sm font-medium tabular-nums transition-colors",
-                "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
-                checked
-                  ? "border-accent bg-accent-soft text-accent"
-                  : "border-line-strong text-muted hover:text-text",
-              )}
-            >
+            <label key={rate} className={cn(CHIP_BASE, checked ? CHIP_ON : CHIP_OFF)}>
               <input
                 type="radio"
                 name="gst-rate"
@@ -76,15 +75,7 @@ export function RateSelector({
           );
         })}
 
-        <label
-          className={cn(
-            "flex cursor-pointer select-none items-center gap-1.5 rounded-pill border px-4 py-2.5 text-sm font-medium transition-colors",
-            "has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent",
-            customActive
-              ? "border-accent bg-accent-soft text-accent"
-              : "border-line-strong text-muted hover:text-text",
-          )}
-        >
+        <label className={cn(CHIP_BASE, "flex items-center gap-1.5", customActive ? CHIP_ON : CHIP_OFF)}>
           <input
             type="radio"
             name="gst-rate"
@@ -98,12 +89,13 @@ export function RateSelector({
       </div>
 
       {customActive && (
-        <div className="mt-3">
+        <div className="mt-2.5 motion-safe:animate-fade-in">
           <div
             className={cn(
-              "flex w-32 items-center gap-1 rounded-control border bg-surface px-3 transition-colors",
-              "focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15",
-              hasError ? "border-danger" : "border-line-strong",
+              "flex w-32 items-center gap-1 rounded-control border bg-surface px-3",
+              "transition-[border-color,box-shadow] duration-150 ease-out",
+              "focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/20",
+              hasError ? "border-danger focus-within:ring-danger/20" : "border-line-strong",
             )}
           >
             <input
@@ -115,26 +107,23 @@ export function RateSelector({
               aria-label="Custom GST rate, percent"
               aria-invalid={hasError}
               value={customValue}
-              onChange={(event) =>
-                onCustomValueChange(sanitizeRate(event.currentTarget.value))
-              }
-              className="w-full bg-transparent py-2 font-mono text-base tabular-nums text-text outline-none placeholder:text-muted/50"
+              onChange={(event) => onCustomValueChange(sanitizeRate(event.currentTarget.value))}
+              className="w-full bg-transparent py-2 font-mono text-base tabular-nums text-text outline-none placeholder:text-muted/40"
             />
             <span aria-hidden="true" className="font-mono text-base text-muted">
               %
             </span>
           </div>
           {hasError && (
-            <p role="alert" className="mt-1 px-1 text-xs text-danger">
+            <p role="alert" className="mt-1.5 px-1 text-xs text-danger">
               {error}
             </p>
           )}
         </div>
       )}
 
-      <p className="mt-2 px-1 text-xs text-muted">
-        Suggested rates are indicative. Confirm the rate that applies to your
-        goods or service.
+      <p className="mt-3 px-1 text-xs leading-relaxed text-muted">
+        Suggested rates are indicative. Confirm the rate that applies to your goods or service.
       </p>
     </fieldset>
   );

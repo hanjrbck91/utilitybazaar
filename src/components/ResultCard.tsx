@@ -2,21 +2,29 @@
 
 import { ChevronDown } from "lucide-react";
 import { formatINR, type GstBreakdown } from "@/lib/gst";
+import { cn } from "@/lib/cn";
 
 interface ResultCardProps {
   breakdown: GstBreakdown | null;
 }
 
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+function Row({
+  label,
+  value,
+  strong,
+}: {
+  label: string;
+  value: string;
+  strong?: boolean;
+}) {
   return (
-    <div className="flex items-baseline justify-between gap-4 py-1.5">
+    <div className="flex items-baseline justify-between gap-4 py-2">
       <span className="text-sm text-muted">{label}</span>
       <span
-        className={
-          strong
-            ? "font-mono text-sm font-semibold tabular-nums text-text"
-            : "font-mono text-sm tabular-nums text-text"
-        }
+        className={cn(
+          "font-mono text-sm tabular-nums text-text",
+          strong && "font-semibold",
+        )}
       >
         {value}
       </span>
@@ -28,11 +36,7 @@ export function ResultCard({ breakdown }: ResultCardProps) {
   const isAdd = breakdown?.mode === "add";
   const isIntra = breakdown?.taxType === "intraState";
 
-  const heroLabel = !breakdown
-    ? "Total amount"
-    : isAdd
-      ? "Total amount"
-      : "Amount before GST";
+  const heroLabel = breakdown && !isAdd ? "Amount before GST" : "Total amount";
 
   const heroValue = breakdown
     ? formatINR(isAdd ? breakdown.total : breakdown.baseAmount)
@@ -47,32 +51,52 @@ export function ResultCard({ breakdown }: ResultCardProps) {
   return (
     <section
       aria-label="Result"
-      className="rounded-control border border-line bg-surface-sunken p-5"
+      className={cn(
+        // Height is reserved so revealing the breakdown toggle after the
+        // first calculation does not shift the page.
+        "flex min-h-[11.125rem] flex-col rounded-control border bg-surface-sunken p-5 shadow-inset",
+        "transition-[border-color] duration-200 ease-out",
+        breakdown ? "border-accent-line" : "border-line",
+      )}
     >
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
         {heroLabel}
       </p>
-      <p
-        className={`mt-1 overflow-x-auto whitespace-nowrap font-mono text-[2rem] font-semibold tabular-nums tracking-tight sm:text-[2.5rem] ${
-          breakdown ? "text-accent" : "text-muted/40"
-        }`}
+
+      {/* Scroll container so very large amounts stay inside the card. The
+          browser makes it keyboard-focusable when it actually scrolls, so it
+          carries its own focus ring and label. */}
+      <div
+        aria-label={heroLabel}
+        className={cn(
+          "mt-1.5 overflow-x-auto rounded-[6px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent",
+        )}
       >
-        {heroValue}
-      </p>
-      <p className="mt-2 min-h-5 text-sm text-muted">{summaryLine}</p>
+        <span
+          key={heroValue}
+          className={cn(
+            "block font-mono text-[2rem] font-semibold leading-none tabular-nums tracking-tight sm:text-[2.5rem]",
+            "motion-safe:animate-result-pop",
+            breakdown ? "text-accent-strong" : "text-muted/45",
+          )}
+        >
+          {heroValue}
+        </span>
+      </div>
+
+      <p className="mt-2.5 min-h-5 text-sm text-muted">{summaryLine}</p>
 
       {breakdown && (
-        <details className="group mt-4 border-t border-line pt-3">
-          <summary className="cursor-pointer list-none rounded-[8px] py-2 outline-none [&::-webkit-details-marker]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
-            <span className="flex items-center justify-between text-sm font-medium text-text">
-              View breakdown
-              <ChevronDown
-                className="size-4 text-muted transition-transform duration-200 group-open:rotate-180"
-                aria-hidden="true"
-              />
-            </span>
+        <details className="group mt-auto pt-4 motion-safe:animate-fade-in">
+          <summary className="-mx-2 flex cursor-pointer list-none items-center justify-between rounded-[9px] px-2 py-2 text-sm font-medium text-muted outline-none transition-colors hover:bg-surface hover:text-text group-open:text-text [&::-webkit-details-marker]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            View breakdown
+            <ChevronDown
+              className="size-4 shrink-0 transition-transform duration-200 ease-out group-open:rotate-180"
+              aria-hidden="true"
+            />
           </summary>
-          <div className="mt-2 divide-y divide-line/70">
+          <div className="mt-1 divide-y divide-line/70 border-t border-line pt-1">
             <Row
               label={isAdd ? "Amount before GST" : "Total amount"}
               value={formatINR(isAdd ? breakdown.baseAmount : breakdown.total)}
@@ -91,9 +115,7 @@ export function ResultCard({ breakdown }: ResultCardProps) {
       )}
 
       <p className="sr-only" aria-live="polite">
-        {breakdown
-          ? `${heroLabel}: ${heroValue}. ${summaryLine}.`
-          : ""}
+        {breakdown ? `${heroLabel}: ${heroValue}. ${summaryLine}.` : ""}
       </p>
     </section>
   );
