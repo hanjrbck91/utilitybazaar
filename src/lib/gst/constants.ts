@@ -23,11 +23,24 @@ export const MAX_GST_RATE = 100;
 export const CURRENCY_DECIMALS = 2;
 
 /**
- * Suggested quick-pick GST rates for the UI layer ONLY.
+ * Quick-pick GST rates for the UI layer ONLY.
  *
- * ⚠️  This list is a convenience for the interface, NOT a legal source of
- * truth. The engine does not read it. Verify against current official
- * CBIC / GST Council notifications before launch, and let callers pass
- * any custom rate they need.
+ * ⚠️  A convenience for the interface, NOT a legal source of truth. The
+ * engine never reads this list — every calculation takes an explicit
+ * rate, so any rate at all can be used.
+ *
+ * These are the three principal slabs of the structure the 56th GST
+ * Council recommended on 3 September 2025, notified by CBIC in
+ * Notification 09/2025-Central Tax (Rate) dated 17 September 2025 and
+ * effective 22 September 2025, which merged the former 12% and 28%
+ * slabs into 5% and 18% and added a 40% de-merit rate.
+ *
+ * Rates outside this list remain in force and are reached through the
+ * Custom field: nil-rated goods (0%), rough diamonds (0.25%), precious
+ * metals and jewellery (3%), and pan masala and tobacco, which stayed
+ * at 28% plus cess pending the compensation-cess transition.
+ *
+ * Verified against CBIC/GST Council material on 27 August 2026. Re-check
+ * after any subsequent Council meeting.
  */
 export const SUGGESTED_GST_RATES: readonly number[] = [5, 18, 40];
