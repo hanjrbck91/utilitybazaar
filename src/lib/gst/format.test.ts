@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { formatINR } from "./index.ts";
+import { formatINR, groupIndianDigits } from "./index.ts";
 
 test("Indian digit grouping (blueprint §6)", () => {
   assert.equal(formatINR(1_000), "₹1,000");
@@ -41,4 +41,14 @@ test("negative values keep the sign before the symbol", () => {
 test("non-finite input formats as zero", () => {
   assert.equal(formatINR(Number.NaN), "₹0");
   assert.equal(formatINR(Number.POSITIVE_INFINITY), "₹0");
+});
+
+test("groupIndianDigits groups a raw integer digit string", () => {
+  assert.equal(groupIndianDigits(""), "");
+  assert.equal(groupIndianDigits("1"), "1");
+  assert.equal(groupIndianDigits("100"), "100");
+  assert.equal(groupIndianDigits("1000"), "1,000");
+  assert.equal(groupIndianDigits("100000"), "1,00,000");
+  assert.equal(groupIndianDigits("1000000"), "10,00,000");
+  assert.equal(groupIndianDigits("10000000"), "1,00,00,000");
 });

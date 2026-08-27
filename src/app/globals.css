@@ -1,26 +1,102 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ * Raw palette lives on :root (with a dark override); the @theme block
+ * maps it onto Tailwind's color / shadow / radius scales.
+ * ------------------------------------------------------------------ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --p-bg: #fbfaf8;
+  --p-surface: #ffffff;
+  --p-surface-sunken: #f4f2ee;
+  --p-line: #e7e3dc;
+  --p-line-strong: #d8d3ca;
+  --p-text: #1b1d1e;
+  --p-muted: #6b7177;
+  --p-accent: #0f9d74;
+  --p-accent-hover: #0c8a65;
+  --p-accent-contrast: #ffffff;
+  --p-accent-soft: #e6f5ef;
+  --p-danger: #c9453f;
+  --p-danger-soft: #fbebea;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --p-shadow-card: 0 1px 2px rgba(20, 28, 24, 0.05), 0 22px 44px -26px rgba(20, 28, 24, 0.22);
+  --p-shadow-raise: 0 1px 2px rgba(20, 28, 24, 0.06), 0 10px 24px -12px rgba(20, 28, 24, 0.16);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --p-bg: #0e1112;
+    --p-surface: #171a1c;
+    --p-surface-sunken: #10191b;
+    --p-line: #2a2f31;
+    --p-line-strong: #383e41;
+    --p-text: #f1f0ee;
+    --p-muted: #9aa1a6;
+    --p-accent: #2dd4a7;
+    --p-accent-hover: #45dcb3;
+    --p-accent-contrast: #05231b;
+    --p-accent-soft: #143029;
+    --p-danger: #f0817f;
+    --p-danger-soft: #2b1b1b;
+
+    --p-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 26px 50px -30px rgba(0, 0, 0, 0.6);
+    --p-shadow-raise: 0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 26px -14px rgba(0, 0, 0, 0.5);
   }
 }
 
+@theme inline {
+  --color-bg: var(--p-bg);
+  --color-surface: var(--p-surface);
+  --color-surface-sunken: var(--p-surface-sunken);
+  --color-line: var(--p-line);
+  --color-line-strong: var(--p-line-strong);
+  --color-text: var(--p-text);
+  --color-muted: var(--p-muted);
+  --color-accent: var(--p-accent);
+  --color-accent-hover: var(--p-accent-hover);
+  --color-accent-contrast: var(--p-accent-contrast);
+  --color-accent-soft: var(--p-accent-soft);
+  --color-danger: var(--p-danger);
+  --color-danger-soft: var(--p-danger-soft);
+
+  --shadow-card: var(--p-shadow-card);
+  --shadow-raise: var(--p-shadow-raise);
+
+  --radius-card: 20px;
+  --radius-control: 12px;
+  --radius-pill: 999px;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--p-bg);
+  color: var(--p-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Kill number-spinner artefacts on the amount field (it is type="text"). */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

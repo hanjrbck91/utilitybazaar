@@ -12,12 +12,16 @@ export interface FormatOptions {
 }
 
 /**
- * Group an integer digit string in the Indian style:
+ * Group a string of integer digits in the Indian style:
  * last three digits, then groups of two.
  *   "100000"  -> "1,00,000"
  *   "1000000" -> "10,00,000"
+ *
+ * Input is expected to be digits only. Exposed for the UI's amount
+ * field, which groups digits live as the user types — it is string
+ * formatting, not calculation.
  */
-function groupIndian(digits: string): string {
+export function groupIndianDigits(digits: string): string {
   if (digits.length <= 3) return digits;
   const last3 = digits.slice(-3);
   const head = digits.slice(0, -3);
@@ -51,7 +55,7 @@ export function formatINR(value: number, options: FormatOptions = {}): string {
   const shown = fraction >= 2 ? abs : Math.round(abs * scale) / scale;
 
   const [intPart, fracPart = ""] = shown.toFixed(Math.max(fraction, 0)).split(".");
-  const grouped = groupIndian(intPart);
+  const grouped = groupIndianDigits(intPart);
   const body = fracPart ? `${grouped}.${fracPart}` : grouped;
 
   return `${negative ? "-" : ""}${symbol ? "₹" : ""}${body}`;
