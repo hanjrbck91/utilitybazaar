@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useDictionary } from "@/components/LocaleProvider";
 import { cn } from "@/lib/cn";
 
 export type RateSelection = number | "custom";
@@ -42,6 +43,7 @@ export function RateSelector({
   onCustomValueChange,
   error,
 }: RateSelectorProps) {
+  const d = useDictionary();
   const customInputRef = useRef<HTMLInputElement>(null);
   const customActive = selection === "custom";
 
@@ -54,7 +56,7 @@ export function RateSelector({
   return (
     <fieldset>
       <legend className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted">
-        GST rate
+        {d.calculator.rate}
       </legend>
 
       <div className="flex flex-wrap gap-2">
@@ -84,7 +86,7 @@ export function RateSelector({
             onChange={onSelectCustom}
             className="sr-only"
           />
-          Custom
+          {d.calculator.custom}
         </label>
       </div>
 
@@ -104,7 +106,7 @@ export function RateSelector({
               inputMode="decimal"
               autoComplete="off"
               placeholder="0"
-              aria-label="Custom GST rate, percent"
+              aria-label={d.calculator.customRateLabel}
               aria-invalid={hasError}
               value={customValue}
               onChange={(event) => onCustomValueChange(sanitizeRate(event.currentTarget.value))}
@@ -122,9 +124,7 @@ export function RateSelector({
         </div>
       )}
 
-      <p className="mt-3 px-1 text-xs leading-relaxed text-muted">
-        Suggested rates are indicative. Confirm the rate that applies to your goods or service.
-      </p>
+      <p className="mt-3 px-1 text-xs leading-relaxed text-muted">{d.calculator.rateHint}</p>
     </fieldset>
   );
 }

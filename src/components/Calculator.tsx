@@ -11,24 +11,18 @@ import {
   type TaxType,
 } from "@/lib/gst";
 import { AmountField } from "@/components/AmountField";
+import { useDictionary } from "@/components/LocaleProvider";
 import { RateSelector, type RateSelection } from "@/components/RateSelector";
+import { ResultActions } from "@/components/ResultActions";
 import { ResultCard } from "@/components/ResultCard";
 import { SegmentedControl } from "@/components/SegmentedControl";
 
 const PRESETS = SUGGESTED_GST_RATES;
 const DEFAULT_RATE: RateSelection = PRESETS.includes(18) ? 18 : (PRESETS[0] ?? 18);
 
-const MODE_OPTIONS = [
-  { value: "add", label: "Add GST" },
-  { value: "remove", label: "Remove GST" },
-] as const satisfies ReadonlyArray<{ value: GstMode; label: string }>;
-
-const TAX_TYPE_OPTIONS = [
-  { value: "intraState", label: "Within state" },
-  { value: "interState", label: "Other state" },
-] as const satisfies ReadonlyArray<{ value: TaxType; label: string }>;
-
 export function Calculator() {
+  const d = useDictionary();
+
   const [rawAmount, setRawAmount] = useState("");
   const [mode, setMode] = useState<GstMode>("add");
   const [rateSelection, setRateSelection] = useState<RateSelection>(DEFAULT_RATE);
@@ -55,9 +49,19 @@ export function Calculator() {
     setCustomRate("");
   };
 
+  const modeOptions = [
+    { value: "add" as const, label: d.calculator.add },
+    { value: "remove" as const, label: d.calculator.remove },
+  ];
+
+  const taxTypeOptions = [
+    { value: "intraState" as const, label: d.calculator.intraState },
+    { value: "interState" as const, label: d.calculator.interState },
+  ];
+
   return (
     <section
-      aria-label="GST calculator"
+      aria-label={d.app.calculatorLabel}
       className="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6"
     >
       <div className="space-y-5">
@@ -65,13 +69,13 @@ export function Calculator() {
           value={rawAmount}
           onChange={setRawAmount}
           onClear={clear}
-          error={amountCheck.valid ? null : amountCheck.message}
+          error={amountCheck.valid ? null : d.errors[amountCheck.code]}
         />
 
         <SegmentedControl<GstMode>
-          legend="Mode"
+          legend={d.calculator.mode}
           name="gst-mode"
-          options={MODE_OPTIONS}
+          options={modeOptions}
           value={mode}
           onChange={setMode}
         />
@@ -83,13 +87,13 @@ export function Calculator() {
           onSelectPreset={setRateSelection}
           onSelectCustom={() => setRateSelection("custom")}
           onCustomValueChange={setCustomRate}
-          error={rateCheck.valid ? null : rateCheck.message}
+          error={rateCheck.valid ? null : d.errors[rateCheck.code]}
         />
 
         <SegmentedControl<TaxType>
-          legend="Tax type"
+          legend={d.calculator.taxType}
           name="tax-type"
-          options={TAX_TYPE_OPTIONS}
+          options={taxTypeOptions}
           value={taxType}
           onChange={setTaxType}
         />
@@ -97,6 +101,11 @@ export function Calculator() {
 
       <div className="mt-6">
         <ResultCard breakdown={breakdown} />
+        {/* Always mounted — see ResultActions for why it fades rather than
+            unmounting when there is no result. */}
+        <div className="pt-3">
+          <ResultActions breakdown={breakdown} />
+        </div>
       </div>
     </section>
   );

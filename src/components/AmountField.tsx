@@ -3,6 +3,7 @@
 import { useCallback, useId, useRef } from "react";
 import { X } from "lucide-react";
 import { groupIndianDigits } from "@/lib/gst";
+import { useDictionary } from "@/components/LocaleProvider";
 import { cn } from "@/lib/cn";
 
 interface AmountFieldProps {
@@ -10,7 +11,7 @@ interface AmountFieldProps {
   value: string;
   onChange: (raw: string) => void;
   onClear: () => void;
-  /** Validation message, shown only once the user has entered something. */
+  /** Localized validation message, shown only once the user has entered something. */
   error?: string | null;
 }
 
@@ -39,6 +40,7 @@ function toDisplay(raw: string): string {
 }
 
 export function AmountField({ value, onChange, onClear, error }: AmountFieldProps) {
+  const d = useDictionary();
   const inputId = useId();
   const errorId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -93,7 +95,7 @@ export function AmountField({ value, onChange, onClear, error }: AmountFieldProp
         htmlFor={inputId}
         className="mb-2 block px-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted"
       >
-        Amount
+        {d.calculator.amount}
       </label>
 
       <div
@@ -138,7 +140,7 @@ export function AmountField({ value, onChange, onClear, error }: AmountFieldProp
         <button
           type="button"
           onClick={clearAndFocus}
-          aria-label="Clear amount"
+          aria-label={d.calculator.clearAmount}
           aria-hidden={!filled}
           tabIndex={filled ? 0 : -1}
           className={cn(

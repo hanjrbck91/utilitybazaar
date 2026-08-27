@@ -2,6 +2,8 @@
 
 import { ChevronDown } from "lucide-react";
 import { formatINR, type GstBreakdown } from "@/lib/gst";
+import { interpolate } from "@/lib/i18n";
+import { useDictionary } from "@/components/LocaleProvider";
 import { cn } from "@/lib/cn";
 
 interface ResultCardProps {
@@ -33,10 +35,11 @@ function Row({
 }
 
 export function ResultCard({ breakdown }: ResultCardProps) {
+  const d = useDictionary();
   const isAdd = breakdown?.mode === "add";
   const isIntra = breakdown?.taxType === "intraState";
 
-  const heroLabel = breakdown && !isAdd ? "Amount before GST" : "Total amount";
+  const heroLabel = breakdown && !isAdd ? d.result.base : d.result.total;
 
   const heroValue = breakdown
     ? formatINR(isAdd ? breakdown.total : breakdown.baseAmount)
@@ -44,13 +47,20 @@ export function ResultCard({ breakdown }: ResultCardProps) {
 
   const summaryLine = breakdown
     ? isAdd
-      ? `Includes ${formatINR(breakdown.gstAmount)} GST at ${breakdown.gstRate}%`
-      : `${formatINR(breakdown.gstAmount)} of ${formatINR(breakdown.total)} is GST at ${breakdown.gstRate}%`
-    : "Enter an amount above to see your GST.";
+      ? interpolate(d.result.summaryAdd, {
+          gst: formatINR(breakdown.gstAmount),
+          rate: breakdown.gstRate,
+        })
+      : interpolate(d.result.summaryRemove, {
+          gst: formatINR(breakdown.gstAmount),
+          total: formatINR(breakdown.total),
+          rate: breakdown.gstRate,
+        })
+    : d.result.empty;
 
   return (
     <section
-      aria-label="Result"
+      aria-label={d.result.label}
       className={cn(
         // Height is reserved so revealing the breakdown toggle after the
         // first calculation does not shift the page.
@@ -90,7 +100,7 @@ export function ResultCard({ breakdown }: ResultCardProps) {
       {breakdown && (
         <details className="group mt-auto pt-4 motion-safe:animate-fade-in">
           <summary className="-mx-2 flex cursor-pointer list-none items-center justify-between rounded-[9px] px-2 py-2 text-sm font-medium text-muted outline-none transition-colors hover:bg-surface hover:text-text group-open:text-text [&::-webkit-details-marker]:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
-            View breakdown
+            {d.result.viewBreakdown}
             <ChevronDown
               className="size-4 shrink-0 transition-transform duration-200 ease-out group-open:rotate-180"
               aria-hidden="true"
@@ -98,18 +108,18 @@ export function ResultCard({ breakdown }: ResultCardProps) {
           </summary>
           <div className="mt-1 divide-y divide-line/70 border-t border-line pt-1">
             <Row
-              label={isAdd ? "Amount before GST" : "Total amount"}
+              label={isAdd ? d.result.base : d.result.total}
               value={formatINR(isAdd ? breakdown.baseAmount : breakdown.total)}
             />
             {isIntra ? (
               <>
-                <Row label="CGST" value={formatINR(breakdown.cgst)} />
-                <Row label="SGST" value={formatINR(breakdown.sgst)} />
+                <Row label={d.result.cgst} value={formatINR(breakdown.cgst)} />
+                <Row label={d.result.sgst} value={formatINR(breakdown.sgst)} />
               </>
             ) : (
-              <Row label="IGST" value={formatINR(breakdown.igst)} />
+              <Row label={d.result.igst} value={formatINR(breakdown.igst)} />
             )}
-            <Row label="Total GST" value={formatINR(breakdown.gstAmount)} strong />
+            <Row label={d.result.totalGst} value={formatINR(breakdown.gstAmount)} strong />
           </div>
         </details>
       )}
