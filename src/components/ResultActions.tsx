@@ -8,6 +8,7 @@ import { useSpeech } from "@/lib/speech/useSpeech";
 import { buildShareText } from "@/lib/share/summary";
 import { canNativeShare, shareOrCopy, type ShareOutcome } from "@/lib/share/share";
 import { useLocale } from "@/components/LocaleProvider";
+import { track } from "@/lib/analytics/track";
 import { cn } from "@/lib/cn";
 
 interface ResultActionsProps {
@@ -88,11 +89,13 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
   const handleListen = useCallback(() => {
     if (speech.speaking) {
       speech.stop();
+      track("audio_used", { locale, action: "stop" });
       return;
     }
     if (!breakdown) return;
     speech.speak(buildSpeechText(breakdown, d));
-  }, [breakdown, d, speech]);
+    track("audio_used", { locale, action: "play" });
+  }, [breakdown, d, locale, speech]);
 
   const handleShare = useCallback(async () => {
     if (!breakdown) return;
@@ -111,6 +114,17 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
     setLastOutcome({ value: result, signature });
     if (resetTimer.current) window.clearTimeout(resetTimer.current);
     resetTimer.current = window.setTimeout(() => setLastOutcome(null), 2600);
+
+    // Only how the share went — never the summary, the figures, or the
+    // shop name. Whether a name was filled in is a boolean, not the text.
+    track("share_used", {
+      method: result === "copied" || result === "failed" ? "copy" : "native",
+      outcome: result,
+      has_shop_name: shopName.trim() !== "",
+    });
+    if (result === "copied" || result === "failed") {
+      track("copy_used", { outcome: result });
+    }
   }, [breakdown, d, shopName, signature]);
 
   const voiceMissing = speech.availability === "missing";

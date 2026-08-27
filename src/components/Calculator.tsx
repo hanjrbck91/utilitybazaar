@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics/track";
 import {
   SUGGESTED_GST_RATES,
   tryCalculateGst,
@@ -44,9 +45,34 @@ export function Calculator() {
     breakdown = result.ok ? result.data : null;
   }
 
+  // Report that the tool was used, once per visit — not per keystroke.
+  // Only the two enum choices travel; the amount and the result never do.
+  const reported = useRef(false);
+  useEffect(() => {
+    if (reported.current || !breakdown) return;
+    reported.current = true;
+    track("calculator_used", { mode: breakdown.mode, tax_type: breakdown.taxType });
+  }, [breakdown]);
+
   const clear = () => {
     setRawAmount("");
     setCustomRate("");
+  };
+
+  const changeMode = (next: GstMode) => {
+    setMode(next);
+    track("gst_mode_changed", { mode: next });
+  };
+
+  const selectPreset = (rate: number) => {
+    setRateSelection(rate);
+    track("rate_selected", { rate_kind: "preset", rate });
+  };
+
+  const selectCustom = () => {
+    setRateSelection("custom");
+    // The custom rate's value is deliberately not reported.
+    track("rate_selected", { rate_kind: "custom" });
   };
 
   const modeOptions = [
@@ -77,15 +103,15 @@ export function Calculator() {
           name="gst-mode"
           options={modeOptions}
           value={mode}
-          onChange={setMode}
+          onChange={changeMode}
         />
 
         <RateSelector
           presets={PRESETS}
           selection={rateSelection}
           customValue={customRate}
-          onSelectPreset={setRateSelection}
-          onSelectCustom={() => setRateSelection("custom")}
+          onSelectPreset={selectPreset}
+          onSelectCustom={selectCustom}
           onCustomValueChange={setCustomRate}
           error={rateCheck.valid ? null : d.errors[rateCheck.code]}
         />

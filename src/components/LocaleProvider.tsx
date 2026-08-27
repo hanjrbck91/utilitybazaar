@@ -1,55 +1,45 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import {
-  DEFAULT_LOCALE,
-  getDictionary,
-  getLocaleTag,
-  type Dictionary,
-  type Locale,
-} from "@/lib/i18n";
+import { createContext, useContext, useEffect, useMemo } from "react";
+import { getDictionary, getLocaleTag, type Dictionary, type Locale } from "@/lib/i18n";
 
 interface LocaleContextValue {
   locale: Locale;
   /** BCP 47 tag, e.g. "hi-IN". */
   tag: string;
   d: Dictionary;
-  setLocale: (locale: Locale) => void;
 }
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 /**
- * Holds the active locale for the client tree.
+ * Supplies the active locale to the client tree.
  *
- * `initialLocale` is a prop rather than internal state so that when
- * localized routes land (`/` and `/hi/`), the route segment can seed it
- * without touching any consumer.
+ * The locale comes from the route segment and is read-only here: the URL
+ * is the single source of truth, which is what makes the two languages
+ * separately linkable, indexable and shareable.
  */
 export function LocaleProvider({
   children,
-  initialLocale = DEFAULT_LOCALE,
+  initialLocale,
 }: {
   children: React.ReactNode;
-  initialLocale?: Locale;
+  initialLocale: Locale;
 }) {
-  const [locale, setLocale] = useState<Locale>(initialLocale);
-
-  // Keep <html lang> honest: assistive tech and speech synthesis both
-  // read it, and the server rendered whatever the route said.
-  useEffect(() => {
-    document.documentElement.lang = getLocaleTag(locale);
-  }, [locale]);
-
   const value = useMemo<LocaleContextValue>(
     () => ({
-      locale,
-      tag: getLocaleTag(locale),
-      d: getDictionary(locale),
-      setLocale,
+      locale: initialLocale,
+      tag: getLocaleTag(initialLocale),
+      d: getDictionary(initialLocale),
     }),
-    [locale],
+    [initialLocale],
   );
+
+  // The server already renders the right `lang`. This only keeps it
+  // correct after a client-side navigation between the two locales.
+  useEffect(() => {
+    document.documentElement.lang = value.tag;
+  }, [value.tag]);
 
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
@@ -65,10 +55,4 @@ export function useLocale(): LocaleContextValue {
 /** Convenience for components that only need the strings. */
 export function useDictionary(): Dictionary {
   return useLocale().d;
-}
-
-/** Stable no-op guard so consumers can toggle without re-creating handlers. */
-export function useSetLocale(): (locale: Locale) => void {
-  const { setLocale } = useLocale();
-  return useCallback((next: Locale) => setLocale(next), [setLocale]);
 }
