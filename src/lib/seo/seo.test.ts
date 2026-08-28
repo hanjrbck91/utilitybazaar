@@ -9,7 +9,11 @@ import {
   calculatorPath,
   indexablePaths,
 } from "../routes.ts";
-import { buildCalculatorJsonLd, serializeJsonLd } from "./jsonld.ts";
+import {
+  buildCalculatorJsonLd,
+  buildWebSiteJsonLd,
+  serializeJsonLd,
+} from "./jsonld.ts";
 import { buildCalculatorSeo, buildStaticPageSeo, toOpenGraphLocale } from "./metadata.ts";
 import { buildRobots, buildSitemap } from "./sitemap.ts";
 
@@ -164,6 +168,25 @@ test("JSON-LD serializes to valid JSON and cannot close its script tag", () => {
   assert.equal(JSON.parse(nasty).name, "</script><script>alert(1)</script>");
 });
 
+test("WebSite JSON-LD states only what the page verifies", () => {
+  const data = buildWebSiteJsonLd();
+  assert.equal(data["@type"], "WebSite");
+  assert.equal(data.url, `${SITE_URL}/`);
+  assert.ok(data.name.length > 0);
+  assert.deepEqual(data.inLanguage, ["en-IN", "hi-IN"]);
+  for (const banned of [
+    "potentialAction",
+    "publisher",
+    "author",
+    "organization",
+    "sameAs",
+    "aggregateRating",
+  ]) {
+    assert.ok(!(banned in data), `fabricated ${banned}`);
+  }
+  assert.equal(JSON.parse(serializeJsonLd(data))["@type"], "WebSite");
+});
+
 // --- sitemap and robots -----------------------------------------------
 
 test("sitemap lists every indexable route once, absolutely", () => {
@@ -173,6 +196,24 @@ test("sitemap lists every indexable route once, absolutely", () => {
   assert.deepEqual(urls, indexablePaths().map((path) => `${SITE_URL}${path}`));
   assert.equal(new Set(urls).size, urls.length, "duplicate URL in sitemap");
   for (const url of urls) assert.ok(url.startsWith("http"), url);
+});
+
+test("every sitemap entry carries a truthful ISO last-modified date", () => {
+  for (const entry of buildSitemap()) {
+    assert.match(
+      entry.lastModified,
+      /^\d{4}-\d{2}-\d{2}$/,
+      `${entry.url} lastModified is not an ISO date`,
+    );
+    assert.ok(
+      !Number.isNaN(Date.parse(entry.lastModified)),
+      `${entry.url} lastModified is not a real date`,
+    );
+    assert.ok(
+      Date.parse(entry.lastModified) <= Date.now(),
+      `${entry.url} lastModified is in the future`,
+    );
+  }
 });
 
 test("sitemap excludes the root redirect and any internal route", () => {

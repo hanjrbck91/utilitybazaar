@@ -4,10 +4,32 @@ import { STATIC_PATHS, calculatorPath } from "../routes.ts";
 
 export interface SitemapEntry {
   url: string;
+  /**
+   * ISO date the page's content last changed — taken from the Git
+   * history of the sources that render it, not the build clock, so a
+   * rebuild that changes nothing does not re-date the page.
+   * Update the matching value in {@link LAST_MODIFIED} when the content
+   * of a route actually changes.
+   */
+  lastModified: string;
   changeFrequency: "monthly" | "yearly";
   priority: number;
   alternates?: { languages: Record<string, string> };
 }
+
+/**
+ * Truthful last-modified dates per route.
+ *
+ * `calculator` covers `/en/gst-calculator` and `/hi/gst-calculator`,
+ * whose text lives in the shared translation dictionaries. `supporting`
+ * covers `/about`, `/privacy` and `/terms`. Values reflect the last
+ * commit that touched the relevant sources; bump them only on a real
+ * content change.
+ */
+const LAST_MODIFIED = {
+  calculator: "2026-08-28",
+  supporting: "2026-08-27",
+} as const;
 
 export interface RobotsRules {
   rules: { userAgent: string; allow?: string; disallow?: string };
@@ -30,6 +52,7 @@ export function buildSitemap(): SitemapEntry[] {
 
   const calculators: SitemapEntry[] = LOCALES.map((locale) => ({
     url: absoluteUrl(calculatorPath(locale)),
+    lastModified: LAST_MODIFIED.calculator,
     changeFrequency: "monthly",
     priority: 1,
     alternates: { languages },
@@ -37,6 +60,7 @@ export function buildSitemap(): SitemapEntry[] {
 
   const supporting: SitemapEntry[] = Object.values(STATIC_PATHS).map((path) => ({
     url: absoluteUrl(path),
+    lastModified: LAST_MODIFIED.supporting,
     changeFrequency: "yearly",
     priority: 0.3,
   }));

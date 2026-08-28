@@ -44,6 +44,35 @@ export function buildCalculatorJsonLd(locale: Locale): WebApplicationJsonLd {
 }
 
 /**
+ * Site-level structured data.
+ *
+ * A `WebSite` node and nothing more. Every field is verifiable on the
+ * page: the site's name, its canonical origin and the two languages it
+ * is published in. Deliberately omitted:
+ *   - `potentialAction` / `SearchAction` — there is no site search.
+ *   - `Organization` / `publisher` — no logo, no legal entity details
+ *     and no brand shown on the page yet; an entry now would be thin
+ *     and partly unverifiable.
+ */
+export interface WebSiteJsonLd {
+  "@context": "https://schema.org";
+  "@type": "WebSite";
+  name: string;
+  url: string;
+  inLanguage: string[];
+}
+
+export function buildWebSiteJsonLd(): WebSiteJsonLd {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: absoluteUrl("/"),
+    inLanguage: Object.values(LOCALE_TAGS),
+  };
+}
+
+/**
  * Serialize for a `<script type="application/ld+json">` body.
  *
  * `<` is escaped so a string in the payload can never close the script

@@ -7,7 +7,11 @@ import { PageHeader } from "@/components/PageHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SupportingContent } from "@/components/SupportingContent";
 import { isLocale } from "@/lib/i18n";
-import { buildCalculatorJsonLd, serializeJsonLd } from "@/lib/seo/jsonld";
+import {
+  buildCalculatorJsonLd,
+  buildWebSiteJsonLd,
+  serializeJsonLd,
+} from "@/lib/seo/jsonld";
 import { buildCalculatorSeo, metadataBase } from "@/lib/seo/metadata";
 
 export async function generateMetadata({
@@ -60,6 +64,12 @@ export default async function CalculatorPage({
         // Built from static, non-user data — see lib/seo/jsonld.ts.
         dangerouslySetInnerHTML={{
           __html: serializeJsonLd(buildCalculatorJsonLd(locale)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildWebSiteJsonLd()),
         }}
       />
       <LocaleProvider initialLocale={locale}>
