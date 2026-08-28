@@ -30,9 +30,11 @@ export const en = {
     customRateLabel: "Custom GST rate, percent",
     rateHint:
       "Select the rate that applies to your product or service. Other rates exist — use Custom.",
-    taxType: "Tax type",
-    intraState: "Within state",
-    interState: "Other state",
+    taxType: "Type of supply",
+    intraState: "Intra-State",
+    interState: "Inter-State",
+    treatmentIntra: "CGST + SGST / UTGST",
+    treatmentInter: "IGST",
   },
 
   result: {

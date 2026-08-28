@@ -122,6 +122,11 @@ export function Calculator() {
           options={taxTypeOptions}
           value={taxType}
           onChange={setTaxType}
+          hint={
+            taxType === "intraState"
+              ? d.calculator.treatmentIntra
+              : d.calculator.treatmentInter
+          }
         />
       </div>
 

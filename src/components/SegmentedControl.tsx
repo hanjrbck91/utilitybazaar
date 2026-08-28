@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { cn } from "@/lib/cn";
 
 export interface SegmentOption<T extends string> {
@@ -15,12 +16,18 @@ interface SegmentedControlProps<T extends string> {
   options: ReadonlyArray<SegmentOption<T>>;
   value: T;
   onChange: (value: T) => void;
+  /**
+   * Optional caption below the control, tied to the group with
+   * `aria-describedby`. Used to show the tax treatment for the selected
+   * type of supply.
+   */
+  hint?: string;
 }
 
 /**
  * Accessible segmented control built on native radio inputs, so keyboard
  * navigation (arrow keys), focus and form semantics come for free.
- * Used for the GST mode and the tax-type choice.
+ * Used for the GST mode and the type-of-supply choice.
  */
 export function SegmentedControl<T extends string>({
   legend,
@@ -28,9 +35,12 @@ export function SegmentedControl<T extends string>({
   options,
   value,
   onChange,
+  hint,
 }: SegmentedControlProps<T>) {
+  const hintId = useId();
+
   return (
-    <fieldset>
+    <fieldset aria-describedby={hint ? hintId : undefined}>
       <legend className="mb-2 px-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted">
         {legend}
       </legend>
@@ -62,6 +72,11 @@ export function SegmentedControl<T extends string>({
           );
         })}
       </div>
+      {hint && (
+        <p id={hintId} className="mt-2 px-1 text-xs text-muted" aria-live="polite">
+          {hint}
+        </p>
+      )}
     </fieldset>
   );
 }

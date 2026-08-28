@@ -31,9 +31,11 @@ export const hi: Dictionary = {
     customRateLabel: "अपनी GST दर, प्रतिशत में",
     rateHint:
       "अपने सामान या सेवा पर लागू दर चुनें। और भी दरें होती हैं — उसके लिए “अन्य दर” चुनें।",
-    taxType: "बिक्री कहाँ",
-    intraState: "इसी राज्य में",
-    interState: "दूसरे राज्य में",
+    taxType: "आपूर्ति का प्रकार",
+    intraState: "राज्य के भीतर",
+    interState: "राज्य के बाहर",
+    treatmentIntra: "CGST + SGST / UTGST",
+    treatmentInter: "IGST",
   },
 
   result: {
