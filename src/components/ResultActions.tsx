@@ -81,8 +81,8 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
       track("audio_used", { locale, action: "stop" });
       return;
     }
-    speech.speak(buildSpeechText(breakdown, d));
-    track("audio_used", { locale, action: "play" });
+    const started = speech.speak(buildSpeechText(breakdown, d));
+    if (started) track("audio_used", { locale, action: "play" });
   }, [breakdown, d, locale, speech]);
 
   const handleShare = useCallback(async () => {
@@ -132,7 +132,7 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
           onClick={handleListen}
           disabled={listenDisabled}
           title={listenHint}
-          aria-label={listenHint}
+          aria-describedby={listenHint ? "listen-hint" : undefined}
           className={cn(BUTTON, speech.speaking && "border-accent bg-accent-soft text-accent-strong")}
         >
           {speech.speaking ? (
@@ -157,6 +157,12 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
           {shareCopied ? d.actions.copied : d.actions.share}
         </button>
       </div>
+
+      {listenHint && (
+        <p id="listen-hint" className="mt-2 px-1 text-xs text-muted">
+          {listenHint}
+        </p>
+      )}
 
       <div className="mt-2.5">
         <button

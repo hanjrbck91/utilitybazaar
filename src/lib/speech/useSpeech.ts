@@ -15,7 +15,12 @@ interface SpeechState {
   /** Whether a voice exists for the active locale. */
   availability: VoiceAvailability;
   speaking: boolean;
-  speak: (text: string) => void;
+  /**
+   * Speak `text` in the active locale. Returns `false` and does nothing
+   * if the browser has no voice for that locale's language — the text is
+   * never read with a wrong-language voice.
+   */
+  speak: (text: string) => boolean;
   stop: () => void;
 }
 
@@ -53,27 +58,42 @@ export function useSpeech(locale: Locale): SpeechState {
   }, []);
 
   const speak = useCallback(
-    (text: string) => {
-      if (!isSupportedOnClient()) return;
+    (text: string): boolean => {
+      if (!isSupportedOnClient()) return false;
       const synth = window.speechSynthesis;
 
-      // Always clear the queue first, so a new result replaces the previous
-      // one instead of being read out after it.
-      synth.cancel();
+      // Pick the voice from the *live* list, then refuse to speak at all
+      // if there is no voice for this locale's language. Leaving
+      // `utterance.voice` unset would let the browser fall back to its
+      // default voice — for Hindi text that is almost always an English
+      // voice, which reads Devanagari as gibberish. No voice, no speech.
+      const voice = pickVoice(synth.getVoices(), locale);
+      if (!voice) return false;
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = getLocaleTag(locale);
-
       // getVoices() returns real SpeechSynthesisVoice objects; VoiceLike is
       // the structural subset we match on.
-      const voice = pickVoice(synth.getVoices(), locale);
-      if (voice) utterance.voice = voice as SpeechSynthesisVoice;
+      try {
+        utterance.voice = voice as SpeechSynthesisVoice;
+      } catch {
+        // Some engines reject a voice object; fall through to the guard.
+      }
+      // Only ever speak with an explicitly-bound voice. If binding did not
+      // take, `utterance.voice` stays null and the engine would use its
+      // default — for Hindi that is an English voice reading Devanagari.
+      if (!utterance.voice) return false;
+
+      // Clear the queue, so a new result replaces the previous one instead
+      // of being read out after it.
+      synth.cancel();
 
       utterance.onend = () => setSpeaking(false);
       utterance.onerror = () => setSpeaking(false);
 
       setSpeaking(true);
       synth.speak(utterance);
+      return true;
     },
     [locale],
   );

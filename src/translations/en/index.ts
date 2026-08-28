@@ -67,8 +67,9 @@ export const en = {
     listen: "Listen",
     stop: "Stop",
     speaking: "Reading the result aloud",
-    listenUnavailable: "Read aloud is not available in this browser",
-    listenNoVoice: "Your browser does not have a Hindi voice installed",
+    listenUnavailable: "Read aloud is not available in this browser.",
+    listenNoVoice:
+      "Hindi read-aloud needs a Hindi voice, which is not available on this device or browser.",
     share: "Share",
     copied: "Copied!",
     copyFailed: "Could not copy. Select the result and copy it manually.",

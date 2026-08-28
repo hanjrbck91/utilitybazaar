@@ -19,12 +19,17 @@ function primary(lang: string): string {
 /**
  * Pick the best available voice for a locale.
  *
- * 1. exact region match (hi-IN, en-IN)
- * 2. any voice sharing the language (hi-*, en-*)
- * 3. null — the caller decides how to degrade
+ * Priority, per language:
+ *   1. exact region match — `hi-IN` for Hindi, `en-IN` for English
+ *      (so an Indian English voice always wins over `en-US` / `en-GB`)
+ *   2. any other voice of the same language — `hi-*` for Hindi,
+ *      `en-*` for English
+ *   3. `null` — the caller must then disable audio for this locale
  *
- * Never falls back across languages: reading Hindi with an English voice
- * produces gibberish, so no voice is better than the wrong voice.
+ * It never crosses a language boundary. Reading Devanagari with an
+ * English voice produces gibberish, so for Hindi the choice is a Hindi
+ * voice or nothing — an English voice is never substituted, and vice
+ * versa.
  */
 export function pickVoice(
   voices: ReadonlyArray<VoiceLike>,
@@ -38,6 +43,14 @@ export function pickVoice(
 
   const sameLanguage = voices.find((voice) => primary(voice.lang) === lang);
   return sameLanguage ?? null;
+}
+
+/** True when {@link pickVoice} would return a usable voice for `locale`. */
+export function hasVoiceForLocale(
+  voices: ReadonlyArray<VoiceLike>,
+  locale: Locale,
+): boolean {
+  return pickVoice(voices, locale) !== null;
 }
 
 export type VoiceAvailability = "ready" | "unknown" | "missing";

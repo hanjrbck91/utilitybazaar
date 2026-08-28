@@ -4,7 +4,12 @@ import test from "node:test";
 import { calculateGst, type GstInput } from "../gst/index.ts";
 import { getDictionary } from "../i18n/index.ts";
 import { buildSpeechText } from "./script.ts";
-import { pickVoice, voiceAvailability, type VoiceLike } from "./voice.ts";
+import {
+  hasVoiceForLocale,
+  pickVoice,
+  voiceAvailability,
+  type VoiceLike,
+} from "./voice.ts";
 
 const en = getDictionary("en");
 const hi = getDictionary("hi");
@@ -116,4 +121,113 @@ test("voiceAvailability stays optimistic while the voice list is still loading",
 
 test("voiceAvailability reports ready as soon as a match exists", () => {
   assert.equal(voiceAvailability([voice("hi-IN")], "hi", false), "ready");
+});
+
+// --- Indian-language voice selection, requirement by requirement -----
+
+test("English: exact en-IN voice is selected", () => {
+  const v = pickVoice([voice("en-IN", "Ravi")], "en");
+  assert.equal(v?.name, "Ravi");
+  assert.equal(v?.lang, "en-IN");
+});
+
+test("English: en-IN is preferred over en-US and en-GB", () => {
+  const withIndian = [
+    voice("en-US", "David"),
+    voice("en-GB", "George"),
+    voice("en-IN", "Ravi"),
+  ];
+  assert.equal(pickVoice(withIndian, "en")?.name, "Ravi");
+  // order in the list must not matter
+  assert.equal(
+    pickVoice([voice("en-IN", "Heera"), voice("en-US", "Zira")], "en")?.name,
+    "Heera",
+  );
+});
+
+test("English: another English voice is used only when no en-IN exists", () => {
+  assert.equal(pickVoice([voice("en-US", "David"), voice("en-GB", "George")], "en")?.name, "David");
+});
+
+test("English: never selects a non-English voice", () => {
+  assert.equal(pickVoice([voice("hi-IN"), voice("fr-FR"), voice("de-DE")], "en"), null);
+});
+
+test("Hindi: exact hi-IN voice is selected", () => {
+  const v = pickVoice([voice("hi-IN", "Lekha")], "hi");
+  assert.equal(v?.name, "Lekha");
+  assert.equal(v?.lang, "hi-IN");
+});
+
+test("Hindi: hi-IN is preferred over other Hindi voices", () => {
+  const voices = [voice("hi", "Generic Hindi"), voice("hi-IN", "Swara")];
+  assert.equal(pickVoice(voices, "hi")?.name, "Swara");
+});
+
+test("Hindi: falls back to any hi-* voice when there is no hi-IN", () => {
+  assert.equal(pickVoice([voice("hi", "Generic Hindi")], "hi")?.name, "Generic Hindi");
+  assert.equal(pickVoice([voice("hi-Latn", "Romanised")], "hi")?.name, "Romanised");
+});
+
+test("Hindi: no Hindi voice means no voice — English is never substituted", () => {
+  for (const englishOnly of [
+    [voice("en-IN", "Ravi")],
+    [voice("en-US"), voice("en-GB")],
+    [voice("en-IN"), voice("en-US"), voice("ta-IN"), voice("bn-IN")],
+  ]) {
+    assert.equal(pickVoice(englishOnly, "hi"), null, JSON.stringify(englishOnly));
+    assert.equal(hasVoiceForLocale(englishOnly, "hi"), false);
+    assert.equal(voiceAvailability(englishOnly, "hi", true), "missing");
+  }
+});
+
+test("Hindi: an installed hi-IN voice makes the locale available", () => {
+  const voices = [voice("en-IN", "Ravi"), voice("hi-IN", "Swara")];
+  assert.equal(hasVoiceForLocale(voices, "hi"), true);
+  assert.equal(voiceAvailability(voices, "hi", true), "ready");
+  // and English still resolves to its own Indian voice, unaffected
+  assert.equal(pickVoice(voices, "en")?.name, "Ravi");
+});
+
+// --- speech text: mode x tax-type, both languages ------------------
+
+test("speech text — add / remove x intra / inter, English and Hindi", () => {
+  const cases = [
+    {
+      input: { amount: 10_000, mode: "add", gstRate: 18, taxType: "intraState" } as const,
+      en: "GST is 1,800 rupees. CGST is 900 rupees. SGST is 900 rupees. Total amount is 11,800 rupees.",
+      hi: "GST 1,800 रुपये है। CGST 900 रुपये है। SGST 900 रुपये है। कुल राशि 11,800 रुपये है।",
+    },
+    {
+      input: { amount: 10_000, mode: "add", gstRate: 18, taxType: "interState" } as const,
+      en: "IGST is 1,800 rupees. Total amount is 11,800 rupees.",
+      hi: "IGST 1,800 रुपये है। कुल राशि 11,800 रुपये है।",
+    },
+    {
+      input: { amount: 11_800, mode: "remove", gstRate: 18, taxType: "intraState" } as const,
+      en: "GST is 1,800 rupees. CGST is 900 rupees. SGST is 900 rupees. Amount before GST is 10,000 rupees.",
+      hi: "GST 1,800 रुपये है। CGST 900 रुपये है। SGST 900 रुपये है। GST से पहले की राशि 10,000 रुपये है।",
+    },
+    {
+      input: { amount: 11_800, mode: "remove", gstRate: 18, taxType: "interState" } as const,
+      en: "IGST is 1,800 rupees. Amount before GST is 10,000 rupees.",
+      hi: "IGST 1,800 रुपये है। GST से पहले की राशि 10,000 रुपये है।",
+    },
+  ];
+
+  for (const c of cases) {
+    const enText = buildSpeechText(breakdown(c.input), en);
+    const hiText = buildSpeechText(breakdown(c.input), hi);
+    assert.equal(enText, c.en);
+    assert.equal(hiText, c.hi);
+
+    if (c.input.taxType === "interState") {
+      // IGST only, spoken once — the CGST/SGST split is not mentioned and
+      // the tax amount is not repeated as a separate "GST" line.
+      for (const text of [enText, hiText]) {
+        assert.doesNotMatch(text, /CGST|SGST/);
+        assert.equal((text.match(/IGST/g) ?? []).length, 1);
+      }
+    }
+  }
 });
