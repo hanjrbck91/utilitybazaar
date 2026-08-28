@@ -34,6 +34,8 @@ yarn-error.log*
 .env*
 # the template carries no values and documents what a deploy needs
 !.env.example
+# production config holds only the public site URL, no secrets
+!.env.production
 
 # vercel
 .vercel
