@@ -68,14 +68,14 @@ export const en = {
     listenUnavailable: "Read aloud is not available in this browser",
     listenNoVoice: "Your browser does not have a Hindi voice installed",
     share: "Share",
-    copy: "Copy",
-    copied: "Copied",
+    copied: "Copied!",
     copyFailed: "Could not copy. Select the result and copy it manually.",
     shareTitle: "GST calculation",
     addShopName: "Add shop name",
     hideShopName: "Hide shop name",
-    shopNameLabel: "Shop or business name, optional",
-    shopNamePlaceholder: "Shop name (optional)",
+    shopNameHeading: "Shop / Business name",
+    shopNamePlaceholder: "e.g. Sharma Traders",
+    shopNameOptionalHint: "Optional. Added only to the shared text, never saved or sent.",
   },
 
   share: {

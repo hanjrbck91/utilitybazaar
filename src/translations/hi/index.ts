@@ -69,14 +69,14 @@ export const hi: Dictionary = {
     listenUnavailable: "इस ब्राउज़र में सुनाने की सुविधा नहीं है",
     listenNoVoice: "आपके ब्राउज़र में हिन्दी आवाज़ मौजूद नहीं है",
     share: "भेजें",
-    copy: "कॉपी करें",
-    copied: "कॉपी हो गया",
+    copied: "कॉपी हो गया!",
     copyFailed: "कॉपी नहीं हो पाया। नतीजा चुनकर खुद कॉपी करें।",
     shareTitle: "GST हिसाब",
     addShopName: "दुकान का नाम जोड़ें",
     hideShopName: "दुकान का नाम हटाएँ",
-    shopNameLabel: "दुकान या कारोबार का नाम, ज़रूरी नहीं",
-    shopNamePlaceholder: "दुकान का नाम (ज़रूरी नहीं)",
+    shopNameHeading: "दुकान / कारोबार का नाम",
+    shopNamePlaceholder: "जैसे, शर्मा ट्रेडर्स",
+    shopNameOptionalHint: "ज़रूरी नहीं। सिर्फ़ भेजे जाने वाले टेक्स्ट में जुड़ता है, कहीं सेव या भेजा नहीं जाता।",
   },
 
   share: {

@@ -6,10 +6,7 @@ import { fontVariables } from "@/lib/fonts";
 import { LOCALE_TAGS } from "@/lib/i18n";
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfaf8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1112" },
-  ],
+  themeColor: "#fbfaf7",
 };
 
 /**

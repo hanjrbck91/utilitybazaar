@@ -7,10 +7,8 @@ import { fontVariables } from "@/lib/fonts";
 import { LOCALES, getLocaleTag, isLocale } from "@/lib/i18n";
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfaf8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1112" },
-  ],
+  // The page is light for everyone, so the browser chrome matches it.
+  themeColor: "#fbfaf7",
 };
 
 /** Both locales are known at build time, so both pages prerender. */

@@ -2,27 +2,30 @@ import Script from "next/script";
 import { ADSENSE_CLIENT_ID, isAdsEnabled } from "@/lib/config";
 
 /**
- * A reserved advertising position.
+ * An advertising position.
  *
- * With no publisher ID configured this renders **nothing** — no
- * placeholder, no empty box, no reserved gap. An unapproved or
- * unconfigured deployment looks exactly like a site with no ads, which
- * is the honest state and also the one that reviews best.
+ * With no publisher ID configured this renders **nothing at all** — no
+ * placeholder, no border, no reserved height. An unconfigured
+ * deployment (including local development) looks exactly like a site
+ * with no ads, because that is what it is.
  *
- * Placement rules live at the call sites: never inside the amount input,
- * never between the controls and the result, never over a control, and
- * never close enough to a tappable element to catch a mis-tap.
+ * With a publisher ID it reserves a modest responsive block so that a
+ * served ad does not shift the page. There is no border or "Ad" caption:
+ * an unfilled auto-format slot collapses itself, and AdSense creatives
+ * bring their own frame.
+ *
+ * Placement rules live at the call sites: after the whole tool, before
+ * the supporting content, never between a control and its result, never
+ * over a control, and never close enough to a tappable element to catch
+ * a mis-tap.
  */
 export function AdSlot({ slot }: { slot?: string }) {
   if (!isAdsEnabled) return null;
 
   return (
-    <aside
-      aria-label="Advertisement"
-      className="mt-8 overflow-hidden rounded-control border border-line"
-    >
+    <aside aria-label="Advertisement" className="mt-8 overflow-hidden">
       <ins
-        className="adsbygoogle block"
+        className="adsbygoogle block min-h-[90px] w-full sm:min-h-[120px]"
         style={{ display: "block" }}
         data-ad-client={ADSENSE_CLIENT_ID}
         data-ad-slot={slot}

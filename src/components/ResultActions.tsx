@@ -1,31 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Check, Copy, Share2, Square, Volume2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Check, Minus, Plus, Share2, Square, Volume2 } from "lucide-react";
 import type { GstBreakdown } from "@/lib/gst";
 import { buildSpeechText } from "@/lib/speech/script";
 import { useSpeech } from "@/lib/speech/useSpeech";
 import { buildShareText } from "@/lib/share/summary";
-import { canNativeShare, shareOrCopy, type ShareOutcome } from "@/lib/share/share";
+import { shareOrCopy, type ShareOutcome } from "@/lib/share/share";
 import { useLocale } from "@/components/LocaleProvider";
 import { track } from "@/lib/analytics/track";
 import { cn } from "@/lib/cn";
 
 interface ResultActionsProps {
-  /** `null` while there is no valid result — the row stays mounted but inert. */
-  breakdown: GstBreakdown | null;
+  breakdown: GstBreakdown;
 }
 
 const BUTTON =
-  "flex min-h-9 items-center justify-center gap-1.5 rounded-pill border border-line-strong px-3.5 py-2 " +
-  "text-sm font-medium text-muted transition-[color,background-color,border-color,transform] duration-150 ease-out " +
-  "hover:border-muted/50 hover:text-text active:scale-[0.96] " +
+  "flex min-h-10 flex-1 items-center justify-center gap-2 rounded-pill border border-line-strong px-4 py-2.5 " +
+  "text-sm font-semibold text-text transition-[color,background-color,border-color,transform] duration-150 ease-out " +
+  "hover:border-accent-line hover:bg-accent-soft active:scale-[0.97] " +
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent " +
-  "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-line-strong disabled:hover:text-muted disabled:active:scale-100";
+  "disabled:cursor-not-allowed disabled:border-line disabled:bg-transparent disabled:text-muted/60 disabled:hover:bg-transparent disabled:active:scale-100";
 
-/** Identifies a result, so a "Copied" confirmation cannot outlive its figures. */
-function signatureOf(breakdown: GstBreakdown | null): string {
-  if (!breakdown) return "";
+/** Identifies a result, so a "Copied!" confirmation cannot outlive its figures. */
+function signatureOf(breakdown: GstBreakdown): string {
   return [
     breakdown.mode,
     breakdown.taxType,
@@ -35,31 +33,22 @@ function signatureOf(breakdown: GstBreakdown | null): string {
   ].join("|");
 }
 
-const noopSubscribe = () => () => {};
-const detectNativeShare = () =>
-  canNativeShare(navigator, { title: "GST", text: "GST calculation" });
-const nativeShareOnServer = () => false;
-
 /**
- * Listen / Share, plus an optional shop name for the share text.
+ * Listen and Share, with an optional shop name folded away underneath.
  *
- * The row is visible only once a valid result exists, but it stays
- * mounted and `inert` before then. Rendering it conditionally would move
- * the page on the first calculation, and by a different amount depending
- * on whether the buttons wrap — reserving a fixed height cannot cover
- * every viewport, whereas keeping the real markup always can.
+ * "Share" is the single mental model whatever the browser can do: it
+ * opens the native share sheet where one exists and copies the summary
+ * to the clipboard where it does not, confirming with "Copied!". The
+ * label never changes to "Copy" — the capability difference is the
+ * browser's concern, not the user's.
+ *
+ * Everything stays on the device: the summary reaches only the OS share
+ * sheet or the clipboard, and analytics only ever learns whether a shop
+ * name exists, never the name.
  */
 export function ResultActions({ breakdown }: ResultActionsProps) {
   const { locale, d } = useLocale();
   const speech = useSpeech(locale);
-
-  // Feature-detected on the client: the server has no `navigator`, and
-  // deciding during render would produce a hydration mismatch.
-  const nativeShare = useSyncExternalStore(
-    noopSubscribe,
-    detectNativeShare,
-    nativeShareOnServer,
-  );
 
   const [showShopName, setShowShopName] = useState(false);
   const [shopName, setShopName] = useState("");
@@ -92,13 +81,11 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
       track("audio_used", { locale, action: "stop" });
       return;
     }
-    if (!breakdown) return;
     speech.speak(buildSpeechText(breakdown, d));
     track("audio_used", { locale, action: "play" });
   }, [breakdown, d, locale, speech]);
 
   const handleShare = useCallback(async () => {
-    if (!breakdown) return;
     const text = buildShareText({
       breakdown,
       dictionary: d,
@@ -135,32 +122,18 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
       ? d.actions.listenNoVoice
       : undefined;
 
-  const shareLabel =
-    outcome === "copied"
-      ? d.actions.copied
-      : nativeShare
-        ? d.actions.share
-        : d.actions.copy;
-
-  const idle = breakdown === null;
+  const shareCopied = outcome === "copied";
 
   return (
-    <div
-      inert={idle}
-      aria-hidden={idle}
-      className={cn(
-        "transition-opacity duration-200 ease-out",
-        idle && "pointer-events-none opacity-0",
-      )}
-    >
-      <div className="flex flex-wrap items-center gap-2">
+    <div>
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={handleListen}
           disabled={listenDisabled}
           title={listenHint}
           aria-label={listenHint}
-          className={cn(BUTTON, speech.speaking && "border-accent text-accent-strong")}
+          className={cn(BUTTON, speech.speaking && "border-accent bg-accent-soft text-accent-strong")}
         >
           {speech.speaking ? (
             <Square className="size-4 shrink-0 fill-current" aria-hidden="true" />
@@ -173,67 +146,77 @@ export function ResultActions({ breakdown }: ResultActionsProps) {
         <button
           type="button"
           onClick={handleShare}
-          className={cn(BUTTON, outcome === "copied" && "border-accent text-accent-strong")}
+          aria-label={d.actions.share}
+          className={cn(BUTTON, shareCopied && "border-accent bg-accent-soft text-accent-strong")}
         >
-          {outcome === "copied" ? (
+          {shareCopied ? (
             <Check className="size-4 shrink-0" aria-hidden="true" />
-          ) : nativeShare ? (
-            <Share2 className="size-4 shrink-0" aria-hidden="true" />
           ) : (
-            <Copy className="size-4 shrink-0" aria-hidden="true" />
+            <Share2 className="size-4 shrink-0" aria-hidden="true" />
           )}
-          {shareLabel}
+          {shareCopied ? d.actions.copied : d.actions.share}
         </button>
+      </div>
 
+      <div className="mt-2.5">
         <button
           type="button"
           onClick={() => setShowShopName((open) => !open)}
           aria-expanded={showShopName}
           className={cn(
-            "min-h-9 rounded-pill px-2.5 py-2 text-sm font-medium text-muted transition-colors duration-150",
-            "hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            "inline-flex min-h-9 items-center gap-1.5 rounded-[8px] px-1.5 text-xs font-medium text-muted",
+            "transition-colors duration-150 hover:text-accent-strong",
+            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
           )}
         >
+          {showShopName ? (
+            <Minus className="size-3.5 shrink-0" aria-hidden="true" />
+          ) : (
+            <Plus className="size-3.5 shrink-0" aria-hidden="true" />
+          )}
           {showShopName ? d.actions.hideShopName : d.actions.addShopName}
         </button>
-      </div>
 
-      {showShopName && (
-        <div className="mt-2.5 motion-safe:animate-fade-in">
-          <input
-            ref={shopInputRef}
-            type="text"
-            value={shopName}
-            onChange={(event) => setShopName(event.currentTarget.value)}
-            maxLength={60}
-            autoComplete="organization"
-            aria-label={d.actions.shopNameLabel}
-            placeholder={d.actions.shopNamePlaceholder}
-            className={cn(
-              "w-full rounded-control border border-line-strong bg-surface px-3.5 py-2.5 text-sm text-text",
-              "transition-[border-color,box-shadow] duration-150 ease-out outline-none",
-              "placeholder:text-muted/60 focus:border-accent focus:ring-4 focus:ring-accent/20",
-            )}
-          />
-        </div>
-      )}
+        {showShopName && (
+          <div className="mt-2 motion-safe:animate-fade-in">
+            <label
+              htmlFor="shop-name"
+              className="block px-1 text-xs font-semibold uppercase tracking-[0.09em] text-muted"
+            >
+              {d.actions.shopNameHeading}
+            </label>
+            <input
+              ref={shopInputRef}
+              id="shop-name"
+              type="text"
+              value={shopName}
+              onChange={(event) => setShopName(event.currentTarget.value)}
+              maxLength={60}
+              autoComplete="organization"
+              aria-describedby="shop-name-hint"
+              placeholder={d.actions.shopNamePlaceholder}
+              className={cn(
+                "mt-1.5 w-full rounded-control border border-line-strong bg-surface px-3.5 py-2.5 text-sm text-text",
+                "transition-[border-color,box-shadow] duration-150 ease-out outline-none",
+                "placeholder:text-muted/60 focus:border-accent focus:ring-4 focus:ring-accent/15",
+              )}
+            />
+            <p id="shop-name-hint" className="mt-1.5 px-1 text-xs text-muted">
+              {d.actions.shopNameOptionalHint}
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Announcements for screen readers: speaking state and share outcome. */}
       <p className="sr-only" aria-live="polite">
         {speech.speaking ? d.actions.speaking : ""}
       </p>
       <p
-        className={cn(
-          "px-1 text-xs",
-          outcome === "failed" ? "pt-1.5 text-danger" : "sr-only",
-        )}
+        className={cn("px-1 text-xs", outcome === "failed" ? "mt-2 text-danger" : "sr-only")}
         aria-live="polite"
       >
-        {outcome === "copied"
-          ? d.actions.copied
-          : outcome === "failed"
-            ? d.actions.copyFailed
-            : ""}
+        {shareCopied ? d.actions.copied : outcome === "failed" ? d.actions.copyFailed : ""}
       </p>
     </div>
   );

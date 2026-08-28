@@ -125,13 +125,13 @@ export function Calculator() {
         />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-5">
         <ResultCard breakdown={breakdown} />
-        {/* Always mounted — see ResultActions for why it fades rather than
-            unmounting when there is no result. */}
-        <div className="pt-3">
-          <ResultActions breakdown={breakdown} />
-        </div>
+        {breakdown && (
+          <div className="mt-4 motion-safe:animate-fade-in">
+            <ResultActions breakdown={breakdown} />
+          </div>
+        )}
       </div>
     </section>
   );

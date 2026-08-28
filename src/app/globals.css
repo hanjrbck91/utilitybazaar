@@ -1,16 +1,25 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ *
- * Design tokens
- * Raw palette lives on :root (with a dark override); the @theme block
- * maps it onto Tailwind's color / shadow / radius / animation scales.
+ * Design tokens — "modern Indian fintech utility"
+ *
+ * Light is the product identity and the default for everyone,
+ * regardless of the OS colour-scheme preference: the audience is
+ * everyday shopkeepers and traders, and a warm, bright utility is the
+ * familiar, trustworthy read.
+ *
+ * The dark palette is retained and complete, but dormant — it applies
+ * only when `html[data-theme="dark"]` is set, which nothing does today.
+ * That keeps dark supported without letting it define the product.
  * ------------------------------------------------------------------ */
 :root {
-  --p-bg: #fbfaf8;
+  color-scheme: light;
+
+  --p-bg: #fbfaf7;
   --p-surface: #ffffff;
-  --p-surface-sunken: #f4f2ee;
-  --p-line: #e7e3dc;
-  --p-line-strong: #d6d0c6;
+  --p-surface-sunken: #f5f3ef;
+  --p-line: #e8e3da;
+  --p-line-strong: #d7d1c5;
   --p-text: #1b1d1e;
   --p-muted: #666c72;
   --p-accent: #0f9d74;
@@ -18,38 +27,38 @@
   --p-accent-strong: #0b7a5a;
   --p-accent-hover: #0c8a65;
   --p-accent-contrast: #ffffff;
-  --p-accent-soft: #e6f5ef;
-  --p-accent-line: #b9e2d3;
+  --p-accent-soft: #e7f5ef;
+  --p-accent-line: #bce3d4;
   --p-danger: #c9453f;
   --p-danger-soft: #fbebea;
 
-  --p-shadow-card: 0 1px 2px rgba(20, 28, 24, 0.05), 0 22px 44px -26px rgba(20, 28, 24, 0.2);
-  --p-shadow-raise: 0 1px 2px rgba(20, 28, 24, 0.05), 0 10px 22px -12px rgba(20, 28, 24, 0.14);
-  --p-shadow-inset: inset 0 1px 2px rgba(20, 28, 24, 0.05);
+  --p-shadow-card: 0 1px 2px rgba(24, 30, 26, 0.04), 0 12px 28px -18px rgba(24, 30, 26, 0.14);
+  --p-shadow-raise: 0 1px 2px rgba(24, 30, 26, 0.05), 0 6px 16px -10px rgba(24, 30, 26, 0.12);
+  --p-shadow-inset: inset 0 1px 2px rgba(24, 30, 26, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --p-bg: #0e1112;
-    --p-surface: #171a1c;
-    --p-surface-sunken: #10191b;
-    --p-line: #2a2f31;
-    --p-line-strong: #3a4043;
-    --p-text: #f1f0ee;
-    --p-muted: #9aa1a6;
-    --p-accent: #2dd4a7;
-    --p-accent-strong: #2dd4a7;
-    --p-accent-hover: #45dcb3;
-    --p-accent-contrast: #05231b;
-    --p-accent-soft: #17392f;
-    --p-accent-line: #2f5f52;
-    --p-danger: #f0817f;
-    --p-danger-soft: #2b1b1b;
+:root[data-theme="dark"] {
+  color-scheme: dark;
 
-    --p-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 26px 50px -30px rgba(0, 0, 0, 0.6);
-    --p-shadow-raise: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 26px -14px rgba(0, 0, 0, 0.5);
-    --p-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
+  --p-bg: #0e1112;
+  --p-surface: #171a1c;
+  --p-surface-sunken: #10191b;
+  --p-line: #2a2f31;
+  --p-line-strong: #3a4043;
+  --p-text: #f1f0ee;
+  --p-muted: #9aa1a6;
+  --p-accent: #2dd4a7;
+  --p-accent-strong: #2dd4a7;
+  --p-accent-hover: #45dcb3;
+  --p-accent-contrast: #05231b;
+  --p-accent-soft: #17392f;
+  --p-accent-line: #2f5f52;
+  --p-danger: #f0817f;
+  --p-danger-soft: #2b1b1b;
+
+  --p-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 26px 50px -30px rgba(0, 0, 0, 0.6);
+  --p-shadow-raise: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 26px -14px rgba(0, 0, 0, 0.5);
+  --p-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 @theme inline {
