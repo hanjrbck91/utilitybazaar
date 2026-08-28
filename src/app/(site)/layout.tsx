@@ -1,9 +1,15 @@
-import type { Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import "../globals.css";
 import { AdSenseScript } from "@/components/AdSlot";
 import { Analytics } from "@/components/Analytics";
 import { fontVariables } from "@/lib/fonts";
 import { LOCALE_TAGS } from "@/lib/i18n";
+import { metadataBase } from "@/lib/seo/metadata";
+
+/** Site-wide base for resolving any relative metadata URL. */
+export const metadata: Metadata = {
+  metadataBase: metadataBase(),
+};
 
 export const viewport: Viewport = {
   themeColor: "#fbfaf7",

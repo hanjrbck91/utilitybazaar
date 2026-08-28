@@ -1,10 +1,17 @@
-import type { Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import { AdSenseScript } from "@/components/AdSlot";
 import { Analytics } from "@/components/Analytics";
 import { fontVariables } from "@/lib/fonts";
 import { LOCALES, getLocaleTag, isLocale } from "@/lib/i18n";
+import { metadataBase } from "@/lib/seo/metadata";
+
+/** Site-wide base for resolving any relative metadata URL. Pages still set
+ *  their own absolute canonical / OG URLs; this is the fallback. */
+export const metadata: Metadata = {
+  metadataBase: metadataBase(),
+};
 
 export const viewport: Viewport = {
   // The page is light for everyone, so the browser chrome matches it.

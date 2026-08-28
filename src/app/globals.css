@@ -136,6 +136,16 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+/* Collapse an ad slot that AdSense could not fill, so a configured-but-
+ * unfilled deployment shows no empty band. (AdSense's own script does
+ * this for approved sites; this covers the pending-review window.) */
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+aside[aria-label="Advertisement"]:has(> ins[data-ad-status="unfilled"]) {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
