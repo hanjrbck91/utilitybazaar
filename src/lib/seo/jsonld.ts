@@ -73,6 +73,38 @@ export function buildWebSiteJsonLd(): WebSiteJsonLd {
 }
 
 /**
+ * FAQ structured data.
+ *
+ * Built straight from the same dictionary the page renders, so every
+ * question and answer in the markup is also visible on the page — the
+ * only form of `FAQPage` that current search-engine guidance allows.
+ * No `author`, `dateCreated`, vote counts or other invented fields.
+ */
+export interface FaqJsonLd {
+  "@context": "https://schema.org";
+  "@type": "FAQPage";
+  mainEntity: Array<{
+    "@type": "Question";
+    name: string;
+    acceptedAnswer: { "@type": "Answer"; text: string };
+  }>;
+}
+
+export function buildFaqJsonLd(locale: Locale): FaqJsonLd {
+  const d = getDictionary(locale);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: d.content.faq.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+}
+
+/**
  * Serialize for a `<script type="application/ld+json">` body.
  *
  * `<` is escaped so a string in the payload can never close the script

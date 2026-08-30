@@ -11,6 +11,7 @@ import {
 } from "../routes.ts";
 import {
   buildCalculatorJsonLd,
+  buildFaqJsonLd,
   buildWebSiteJsonLd,
   serializeJsonLd,
 } from "./jsonld.ts";
@@ -185,6 +186,39 @@ test("WebSite JSON-LD states only what the page verifies", () => {
     assert.ok(!(banned in data), `fabricated ${banned}`);
   }
   assert.equal(JSON.parse(serializeJsonLd(data))["@type"], "WebSite");
+});
+
+test("FAQ JSON-LD mirrors the visible FAQ exactly, in both locales", () => {
+  for (const locale of LOCALES) {
+    const data = buildFaqJsonLd(locale);
+    const faq = getDictionary(locale).content.faq;
+
+    assert.equal(data["@type"], "FAQPage");
+    assert.ok(faq.length >= 4 && faq.length <= 6, "keep the FAQ short");
+    assert.equal(data.mainEntity.length, faq.length);
+
+    data.mainEntity.forEach((entry, i) => {
+      assert.equal(entry["@type"], "Question");
+      assert.equal(entry.name, faq[i].q, "question text must match the page");
+      assert.equal(entry.acceptedAnswer["@type"], "Answer");
+      assert.equal(entry.acceptedAnswer.text, faq[i].a, "answer text must match the page");
+      // No invented engagement / authorship fields.
+      for (const banned of ["author", "dateCreated", "upvoteCount", "url"]) {
+        assert.ok(!(banned in entry), `fabricated ${banned}`);
+      }
+    });
+
+    const parsed = JSON.parse(serializeJsonLd(data));
+    assert.equal(parsed["@type"], "FAQPage");
+    assert.doesNotMatch(serializeJsonLd(data), /</, "unescaped < breaks the script tag");
+  }
+});
+
+test("both locales carry the same number of FAQ entries", () => {
+  assert.equal(
+    getDictionary("en").content.faq.length,
+    getDictionary("hi").content.faq.length,
+  );
 });
 
 // --- sitemap and robots -----------------------------------------------

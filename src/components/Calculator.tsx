@@ -76,8 +76,8 @@ export function Calculator() {
   };
 
   const modeOptions = [
-    { value: "add" as const, label: d.calculator.add },
-    { value: "remove" as const, label: d.calculator.remove },
+    { value: "add" as const, label: d.calculator.add, sublabel: d.calculator.addSub },
+    { value: "remove" as const, label: d.calculator.remove, sublabel: d.calculator.removeSub },
   ];
 
   const taxTypeOptions = [

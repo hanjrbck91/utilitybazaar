@@ -1,23 +1,30 @@
 "use client";
 
+import Link from "next/link";
 import { useDictionary } from "@/components/LocaleProvider";
+import { STATIC_PATHS } from "@/lib/routes";
 
 /**
  * A short explanation of what the calculator does, below the tool.
  *
- * Four sections, one paragraph each — enough for a reader who does not
- * already know what CGST is, and short enough that the calculator stays
- * the point of the page. Not an article, and not written for a crawler:
- * the Hindi version is written natively rather than translated.
+ * Enough for a reader who does not already know what "GST-inclusive" or
+ * CGST means, and short enough that the calculator stays the point of
+ * the page. Not written for a crawler: the Hindi version is written
+ * natively rather than translated. Every tax fact here is from official
+ * Government of India material (56th GST Council / CBIC Notification
+ * 09/2025-Central Tax (Rate)).
  */
 export function SupportingContent() {
   const d = useDictionary();
+  const c = d.content;
 
   const sections = [
-    { title: d.content.whatIsGstTitle, body: d.content.whatIsGstBody },
-    { title: d.content.addTitle, body: d.content.addBody },
-    { title: d.content.removeTitle, body: d.content.removeBody },
-    { title: d.content.splitTitle, body: d.content.splitBody },
+    { title: c.howTitle, body: c.howBody },
+    { title: c.exclusiveTitle, body: c.exclusiveBody },
+    { title: c.inclusiveTitle, body: c.inclusiveBody },
+    { title: c.reverseTitle, body: c.reverseBody },
+    { title: c.splitTitle, body: c.splitBody },
+    { title: c.ratesTitle, body: c.ratesBody },
   ];
 
   return (
@@ -26,7 +33,7 @@ export function SupportingContent() {
         id="supporting-content"
         className="px-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted"
       >
-        {d.content.heading}
+        {c.heading}
       </h2>
       <div className="mt-4 space-y-6">
         {sections.map((section) => (
@@ -38,6 +45,15 @@ export function SupportingContent() {
           </article>
         ))}
       </div>
+      <p className="mt-5 px-1 text-xs leading-relaxed text-muted">
+        {c.privacyNote}{" "}
+        <Link
+          href={STATIC_PATHS.privacy}
+          className="rounded-[4px] font-medium text-accent-strong underline underline-offset-2 transition-colors hover:text-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          {c.privacyLinkText}
+        </Link>
+      </p>
     </section>
   );
 }

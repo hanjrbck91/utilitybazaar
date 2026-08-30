@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/AdSlot";
 import { Calculator } from "@/components/Calculator";
+import { Faq } from "@/components/Faq";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { PageHeader } from "@/components/PageHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -9,6 +10,7 @@ import { SupportingContent } from "@/components/SupportingContent";
 import { isLocale } from "@/lib/i18n";
 import {
   buildCalculatorJsonLd,
+  buildFaqJsonLd,
   buildWebSiteJsonLd,
   serializeJsonLd,
 } from "@/lib/seo/jsonld";
@@ -72,6 +74,13 @@ export default async function CalculatorPage({
           __html: serializeJsonLd(buildWebSiteJsonLd()),
         }}
       />
+      <script
+        type="application/ld+json"
+        // FAQ questions/answers are the same strings rendered by <Faq />.
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildFaqJsonLd(locale)),
+        }}
+      />
       <LocaleProvider initialLocale={locale}>
         <PageHeader />
         <Calculator />
@@ -79,6 +88,7 @@ export default async function CalculatorPage({
             never between a control and its result. */}
         <AdSlot slot="calculator-below" />
         <SupportingContent />
+        <Faq />
         <SiteFooter />
       </LocaleProvider>
     </main>

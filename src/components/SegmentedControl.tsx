@@ -6,6 +6,12 @@ import { cn } from "@/lib/cn";
 export interface SegmentOption<T extends string> {
   value: T;
   label: string;
+  /**
+   * Optional quieter second line under the label — used to carry the
+   * professional term ("Exclusive" / "Inclusive") alongside the plain
+   * one ("Add GST" / "Remove GST") without crowding the control.
+   */
+  sublabel?: string;
 }
 
 interface SegmentedControlProps<T extends string> {
@@ -67,7 +73,16 @@ export function SegmentedControl<T extends string>({
                 onChange={() => onChange(option.value)}
                 className="sr-only"
               />
-              {option.label}
+              {option.sublabel ? (
+                <span className="flex flex-col items-center leading-tight">
+                  <span>{option.label}</span>
+                  <span className="mt-0.5 text-[0.6875rem] font-normal text-muted">
+                    {option.sublabel}
+                  </span>
+                </span>
+              ) : (
+                option.label
+              )}
             </label>
           );
         })}

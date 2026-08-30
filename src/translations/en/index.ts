@@ -24,7 +24,9 @@ export const en = {
     clearAmount: "Clear amount",
     mode: "Mode",
     add: "Add GST",
+    addSub: "Exclusive",
     remove: "Remove GST",
+    removeSub: "Inclusive",
     rate: "GST rate",
     custom: "Custom",
     customRateLabel: "Custom GST rate, percent",
@@ -107,24 +109,64 @@ export const en = {
   seo: {
     title: "GST Calculator — Calculate GST Online",
     description:
-      "Add GST to a price or remove GST from a GST-inclusive amount, and see the CGST, SGST and IGST split instantly. A free, private GST calculator for India that works in your browser.",
+      "Add GST to a price, or remove GST from a total that already includes it (reverse GST). See the CGST, SGST and IGST split instantly — a free, private GST calculator for India that works in your browser.",
     ogAlt: "GST Calculator for India",
   },
 
   content: {
     heading: "About GST calculations",
-    whatIsGstTitle: "What is GST?",
-    whatIsGstBody:
-      "Goods and Services Tax is the indirect tax charged on most goods and services sold in India. It is added to the price of what you sell, collected from the customer, and paid to the government. The rate depends on what is being sold.",
-    addTitle: "How to add GST",
-    addBody:
-      "Start from the price before tax, then add the GST on top. At 18%, a base price of ₹10,000 carries ₹1,800 of GST, so the customer pays ₹11,800. Choose Add GST when you know your price and need the amount to charge.",
-    removeTitle: "How to remove GST",
-    removeBody:
-      "Removing GST works backwards from a price that already includes it — an MRP, for example, or an amount you have received. Divide by 1 plus the rate: ₹11,800 at 18% comes from a base of ₹10,000, so ₹1,800 was tax. Choose Remove GST for this.",
+
+    howTitle: "How this calculator works",
+    howBody:
+      "Enter an amount, choose whether GST should be added or removed, pick the rate, and select whether the supply is within one state or between states. The result shows the amount before GST, the GST amount, the CGST and SGST or IGST split, and the total. Every calculation runs in your browser — nothing you enter is sent anywhere or saved.",
+
+    exclusiveTitle: "GST-exclusive amounts — Add GST",
+    exclusiveBody:
+      "A GST-exclusive amount is the price before tax. GST is worked out as amount × rate ÷ 100, and the buyer pays the amount plus that GST. For example, ₹10,000 at 18% carries ₹1,800 of GST, so the invoice total is ₹11,800. Choose Add GST when you know your pre-tax price and need the figure to charge.",
+
+    inclusiveTitle: "GST-inclusive amounts — Remove GST",
+    inclusiveBody:
+      "A GST-inclusive amount already contains the tax — a maximum retail price, or a payment you have received. To find the price before tax, the calculator divides by 1 + rate ÷ 100; the GST is whatever is left. For example, ₹11,800 at 18% comes from a base of ₹10,000, so ₹1,800 was GST. Choose Remove GST for this.",
+
+    reverseTitle: "Reverse GST",
+    reverseBody:
+      "Taking GST back out of an inclusive amount is also called reverse GST. A common mistake is to subtract the rate percentage straight from the total: 18% of ₹11,800 is ₹2,124, which would leave ₹9,676 — but the real pre-tax amount is ₹10,000. GST was added to the smaller base, not to the total, so it has to be removed by division, not subtraction.",
+
     splitTitle: "CGST, SGST and IGST",
     splitBody:
-      "The total GST is the same either way; only the split changes. When buyer and seller are in the same state, it is divided equally into CGST for the centre and SGST for the state. When the sale crosses a state border, the whole amount is IGST instead.",
+      "The total GST is the same however it is charged; only who collects it changes. When the buyer and seller are in the same state or union territory, the GST is split equally — half as CGST for the central government and half as SGST (or UTGST) for the state. At 18% that is 9% plus 9%, so ₹1,800 becomes ₹900 and ₹900. When the sale crosses a state border, the whole amount is IGST instead.",
+
+    ratesTitle: "GST rates in this calculator",
+    ratesBody:
+      "The quick-select rates are 5%, 18% and 40% — the main slabs in force since 22 September 2025, when the earlier 12% and 28% slabs were merged into 5% and 18% and a 40% rate was added for luxury and sin goods. Some goods are nil-rated (0%) or carry special rates such as 0.25% and 3%; enter any of these in the Custom field. This is general information, not tax advice — check the rate that officially applies to your goods or service.",
+
+    privacyNote:
+      "Everything is worked out in your browser — nothing you enter is sent to a server or saved.",
+    privacyLinkText: "Read the privacy policy →",
+
+    faqHeading: "Common questions",
+    faq: [
+      {
+        q: "How do I remove GST from a price that already includes it?",
+        a: "Choose Remove GST, enter the GST-inclusive amount and the rate that applied. The calculator divides the amount by 1 + rate ÷ 100 to get the price before tax, and the difference is the GST. Subtracting the rate percentage straight from the total gives the wrong answer.",
+      },
+      {
+        q: "What is the difference between a GST-inclusive and a GST-exclusive price?",
+        a: "A GST-exclusive price is the amount before tax — use Add GST to put GST on top. A GST-inclusive price already contains the tax, such as an MRP — use Remove GST to separate the base amount and the GST.",
+      },
+      {
+        q: "How are CGST and SGST calculated from the GST amount?",
+        a: "For a supply within one state or union territory, the GST amount is split in half: one half is CGST and the other is SGST (or UTGST). At an 18% rate that is 9% each. For a supply between states the whole amount is IGST instead, with no split.",
+      },
+      {
+        q: "Are the 12% and 28% GST slabs still used?",
+        a: "No. From 22 September 2025 the 12% and 28% slabs were merged into 5% and 18%, and a 40% rate was introduced for luxury and sin goods. A few items still carry special rates such as 0.25% and 3%, which you can enter in the Custom field.",
+      },
+      {
+        q: "Which GST rate should I use?",
+        a: "The rate that officially applies to your specific goods or service. This calculator cannot decide that for you — the quick-select options are the common rates, and any other rate can be typed into the Custom field. When it matters, check the current rate from an official source or a qualified professional.",
+      },
+    ],
   },
 
   nav: {
