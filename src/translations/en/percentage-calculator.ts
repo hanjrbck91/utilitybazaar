@@ -62,6 +62,19 @@ export const percentageCalculator = {
     difference: "Difference",
   },
 
+  // Named `copyText`, not `copy`: the shared `copy` object (in shell.ts)
+  // holds the generic button labels ("Copy", "Copied!"); this holds the
+  // per-mode result templates the copy button's text is built from. Both
+  // are top-level in the composed dictionary, so they must not share a
+  // name or one would silently overwrite the other.
+  copyText: {
+    of: "{percent}% of {number} = {result}",
+    isPercent: "{part} is {result}% of {whole}",
+    changeIncrease: "Percentage change from {from} to {to} = {result}% increase",
+    changeDecrease: "Percentage change from {from} to {to} = {result}% decrease",
+    changeNone: "Percentage change from {from} to {to} = no change",
+  },
+
   errors: {
     EMPTY: "Enter a number.",
     NOT_A_NUMBER: "Enter a valid number.",

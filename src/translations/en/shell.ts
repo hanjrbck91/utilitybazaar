@@ -26,6 +26,12 @@ export const shell = {
     otherCalculators: "Other calculators",
   },
 
+  copy: {
+    label: "Copy result",
+    copied: "Copied!",
+    failed: "Couldn't copy",
+  },
+
   about: {
     title: "About",
     description: "What this GST calculator is, and what it is not.",

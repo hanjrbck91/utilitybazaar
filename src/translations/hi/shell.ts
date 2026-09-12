@@ -21,6 +21,12 @@ export const shell = {
     otherCalculators: "अन्य कैलकुलेटर",
   },
 
+  copy: {
+    label: "नतीजा कॉपी करें",
+    copied: "कॉपी हो गया!",
+    failed: "कॉपी नहीं हो पाया",
+  },
+
   about: {
     title: "परिचय",
     description: "यह GST कैलकुलेटर क्या है, और क्या नहीं।",

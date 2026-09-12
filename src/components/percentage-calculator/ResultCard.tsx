@@ -3,7 +3,37 @@
 import { formatNumber, formatPercent, type PercentageResult } from "@/lib/percentage";
 import { interpolate, type PercentageDictionary } from "@/lib/i18n";
 import { useDictionary } from "@/components/LocaleProvider";
+import { CopyButton } from "@/components/CopyButton";
 import { cn } from "@/lib/cn";
+
+/** Plain-text, one-line summary of a result — what the copy button copies. */
+function buildCopyText(result: PercentageResult, d: PercentageDictionary): string {
+  if (result.mode === "of") {
+    return interpolate(d.copyText.of, {
+      percent: result.percent,
+      number: formatNumber(result.number),
+      result: formatNumber(result.result),
+    });
+  }
+  if (result.mode === "isPercent") {
+    return interpolate(d.copyText.isPercent, {
+      part: formatNumber(result.part),
+      whole: formatNumber(result.whole),
+      result: formatNumber(result.result),
+    });
+  }
+  const template =
+    result.direction === "increase"
+      ? d.copyText.changeIncrease
+      : result.direction === "decrease"
+        ? d.copyText.changeDecrease
+        : d.copyText.changeNone;
+  return interpolate(template, {
+    from: formatNumber(result.from),
+    to: formatNumber(result.to),
+    result: formatNumber(result.result),
+  });
+}
 
 interface ResultCardProps {
   result: PercentageResult | null;
@@ -61,22 +91,31 @@ export function ResultCard({ result }: ResultCardProps) {
     >
       <p className="text-xs font-semibold uppercase tracking-[0.09em] text-muted">{heroLabel}</p>
 
-      <div
-        aria-label={heroLabel}
-        className={cn(
-          "mt-1 overflow-x-auto rounded-[6px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent",
-        )}
-      >
-        <span
-          key={heroValue}
+      <div className="mt-1 flex items-center justify-between gap-3">
+        <div
+          aria-label={heroLabel}
           className={cn(
-            "block font-mono text-[2.125rem] font-bold leading-none tabular-nums tracking-tight text-accent-strong sm:text-[2.625rem]",
-            "motion-safe:animate-result-pop",
+            "min-w-0 overflow-x-auto rounded-[6px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent",
           )}
         >
-          {heroValue}
-        </span>
+          <span
+            key={heroValue}
+            className={cn(
+              "block font-mono text-[2.125rem] font-bold leading-none tabular-nums tracking-tight text-accent-strong sm:text-[2.625rem]",
+              "motion-safe:animate-result-pop",
+            )}
+          >
+            {heroValue}
+          </span>
+        </div>
+
+        <CopyButton
+          getText={() => buildCopyText(result, d)}
+          label={d.copy.label}
+          copiedLabel={d.copy.copied}
+          failedLabel={d.copy.failed}
+        />
       </div>
 
       {detail && (

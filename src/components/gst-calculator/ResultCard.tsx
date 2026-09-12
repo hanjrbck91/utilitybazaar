@@ -2,8 +2,10 @@
 
 import { ChevronDown } from "lucide-react";
 import { formatINR, type GstBreakdown } from "@/lib/gst";
+import { buildShareText } from "@/lib/gst/share";
 import { interpolate } from "@/lib/i18n";
 import { useDictionary } from "@/components/LocaleProvider";
+import { CopyButton } from "@/components/CopyButton";
 import { cn } from "@/lib/cn";
 
 interface ResultCardProps {
@@ -75,25 +77,34 @@ export function ResultCard({ breakdown }: ResultCardProps) {
         {heroLabel}
       </p>
 
-      {/* Scroll container so very large amounts stay inside the card. The
-          browser makes it keyboard-focusable when it actually scrolls, so it
-          carries its own focus ring and label. */}
-      <div
-        aria-label={heroLabel}
-        className={cn(
-          "mt-1 overflow-x-auto rounded-[6px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent",
-        )}
-      >
-        <span
-          key={heroValue}
+      <div className="mt-1 flex items-center justify-between gap-3">
+        {/* Scroll container so very large amounts stay inside the card. The
+            browser makes it keyboard-focusable when it actually scrolls, so it
+            carries its own focus ring and label. */}
+        <div
+          aria-label={heroLabel}
           className={cn(
-            "block font-mono text-[2.125rem] font-bold leading-none tabular-nums tracking-tight text-accent-strong sm:text-[2.625rem]",
-            "motion-safe:animate-result-pop",
+            "min-w-0 overflow-x-auto rounded-[6px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent",
           )}
         >
-          {heroValue}
-        </span>
+          <span
+            key={heroValue}
+            className={cn(
+              "block font-mono text-[2.125rem] font-bold leading-none tabular-nums tracking-tight text-accent-strong sm:text-[2.625rem]",
+              "motion-safe:animate-result-pop",
+            )}
+          >
+            {heroValue}
+          </span>
+        </div>
+
+        <CopyButton
+          getText={() => buildShareText({ breakdown, dictionary: d })}
+          label={d.copy.label}
+          copiedLabel={d.copy.copied}
+          failedLabel={d.copy.failed}
+        />
       </div>
 
       <p className="mt-2.5 text-sm text-muted">{summaryLine}</p>
