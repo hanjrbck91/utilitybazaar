@@ -11,12 +11,12 @@ import {
   type GstMode,
   type TaxType,
 } from "@/lib/gst";
-import { AmountField } from "@/components/AmountField";
 import { useDictionary } from "@/components/LocaleProvider";
-import { RateSelector, type RateSelection } from "@/components/RateSelector";
-import { ResultActions } from "@/components/ResultActions";
-import { ResultCard } from "@/components/ResultCard";
 import { SegmentedControl } from "@/components/SegmentedControl";
+import { AmountField } from "./AmountField";
+import { RateSelector, type RateSelection } from "./RateSelector";
+import { ResultActions } from "./ResultActions";
+import { ResultCard } from "./ResultCard";
 
 const PRESETS = SUGGESTED_GST_RATES;
 const DEFAULT_RATE: RateSelection = PRESETS.includes(18) ? 18 : (PRESETS[0] ?? 18);

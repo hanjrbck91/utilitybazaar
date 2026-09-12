@@ -1,4 +1,4 @@
-import { formatINR, type GstBreakdown } from "../gst/index.ts";
+import { formatINR, type GstBreakdown } from "./index.ts";
 import { interpolate, type Dictionary } from "../i18n/index.ts";
 
 export interface ShareSummaryInput {
@@ -17,7 +17,9 @@ export interface ShareSummaryInput {
  * shop name and URL. Plain `Label: value` lines rather than an aligned
  * table, because monospace alignment collapses in WhatsApp and SMS.
  *
- * Pure and framework-free so it can be tested without a DOM.
+ * Pure and framework-free so it can be tested without a DOM. Lives next
+ * to the rest of the GST module because the text it produces is
+ * GST-specific — the generic share/copy mechanics are `lib/share/share.ts`.
  */
 export function buildShareText({
   breakdown,

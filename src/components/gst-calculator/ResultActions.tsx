@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, Minus, Plus, Share2, Square, Volume2 } from "lucide-react";
 import type { GstBreakdown } from "@/lib/gst";
-import { buildSpeechText } from "@/lib/speech/script";
+import { buildSpeechText } from "@/lib/gst/speech";
 import { useSpeech } from "@/lib/speech/useSpeech";
-import { buildShareText } from "@/lib/share/summary";
+import { buildShareText } from "@/lib/gst/share";
 import { shareOrCopy, type ShareOutcome } from "@/lib/share/share";
 import { useLocale } from "@/components/LocaleProvider";
 import { track } from "@/lib/analytics/track";

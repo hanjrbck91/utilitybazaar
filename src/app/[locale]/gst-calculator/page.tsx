@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/AdSlot";
-import { Calculator } from "@/components/Calculator";
 import { Faq } from "@/components/Faq";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { PageHeader } from "@/components/PageHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SupportingContent } from "@/components/SupportingContent";
+import { Calculator } from "@/components/gst-calculator/Calculator";
+import { SupportingContent } from "@/components/gst-calculator/SupportingContent";
 import { isLocale } from "@/lib/i18n";
 import {
   buildCalculatorJsonLd,

@@ -1,4 +1,4 @@
-import { formatINR, type GstBreakdown } from "../gst/index.ts";
+import { formatINR, type GstBreakdown } from "./index.ts";
 import { interpolate, type Dictionary } from "../i18n/index.ts";
 
 /**
@@ -9,7 +9,9 @@ import { interpolate, type Dictionary } from "../i18n/index.ts";
  * IGST is spoken rather than saying it twice.
  *
  * Amounts are formatted without the ₹ symbol — speech engines read
- * "1,800" naturally but stumble over the symbol.
+ * "1,800" naturally but stumble over the symbol. Lives next to the rest
+ * of the GST module because the sentence it produces is GST-specific —
+ * the generic voice-picking mechanics are `lib/speech/`.
  */
 export function buildSpeechText(
   breakdown: GstBreakdown,
