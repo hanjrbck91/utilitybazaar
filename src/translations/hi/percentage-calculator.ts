@@ -12,16 +12,23 @@ export const percentageCalculator = {
 
   calculator: {
     mode: "क्या निकालना है",
-    modeOf: "संख्या का %",
-    modeIsPercent: "कितना % है",
-    modeChange: "% बदलाव",
+    modeOf: "Y का X% कितना होता है?",
+    modeIsPercent: "X, Y का कितना % है?",
+    modeChange: "% बदलाव कितना है?",
 
     percent: "प्रतिशत",
     ofNumber: "किस संख्या का",
     part: "मान",
     whole: "कुल में से",
-    from: "पहले",
-    to: "बाद में",
+    from: "शुरुआती मान",
+    to: "नया मान",
+
+    percentPlaceholder: "जैसे, 12",
+    ofNumberPlaceholder: "जैसे, 100",
+    partPlaceholder: "जैसे, 18",
+    wholePlaceholder: "जैसे, 100",
+    fromPlaceholder: "जैसे, 100",
+    toPlaceholder: "जैसे, 120",
 
     clear: "हटाएँ",
   },
@@ -54,6 +61,7 @@ export const percentageCalculator = {
 
   content: {
     heading: "प्रतिशत की गणना के बारे में",
+    otherCalculatorsHeading: "अन्य कैलकुलेटर",
 
     whatTitle: "प्रतिशत क्या है?",
     whatBody:
@@ -78,8 +86,6 @@ export const percentageCalculator = {
     privacyNote:
       "सब कुछ आपके ब्राउज़र में ही होता है — आपका भरा हुआ कुछ भी सर्वर पर नहीं जाता और न सेव होता है।",
     privacyLinkText: "निजता नीति पढ़ें →",
-
-    crossLinkText: "GST निकालना है?",
 
     faqHeading: "आम सवाल",
     faq: [

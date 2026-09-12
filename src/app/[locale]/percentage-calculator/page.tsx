@@ -6,6 +6,7 @@ import { LocaleProvider } from "@/components/LocaleProvider";
 import { PageHeader } from "@/components/PageHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Calculator } from "@/components/percentage-calculator/Calculator";
+import { OtherCalculators } from "@/components/percentage-calculator/OtherCalculators";
 import { SupportingContent } from "@/components/percentage-calculator/SupportingContent";
 import { getPercentageDictionary, isLocale, LOCALES, type Locale } from "@/lib/i18n";
 import { percentageCalculatorPath } from "@/lib/routes";
@@ -89,6 +90,7 @@ export default async function PercentageCalculatorPage({
       <LocaleProvider initialLocale={locale} dictionary={getPercentageDictionary(locale)}>
         <PageHeader languageHrefs={languageHrefs} />
         <Calculator />
+        <OtherCalculators />
         {/* Advertising, when configured, sits after the whole tool —
             never between a control and its result. */}
         <AdSlot slot="calculator-below" />

@@ -12,16 +12,23 @@ export const percentageCalculator = {
 
   calculator: {
     mode: "Calculate",
-    modeOf: "% of a number",
-    modeIsPercent: "Is what %",
-    modeChange: "% change",
+    modeOf: "What is X% of Y?",
+    modeIsPercent: "What % is X of Y?",
+    modeChange: "What is the % change?",
 
     percent: "Percentage",
     ofNumber: "Of number",
     part: "Value",
     whole: "Out of",
-    from: "From",
-    to: "To",
+    from: "Starting value",
+    to: "New value",
+
+    percentPlaceholder: "e.g. 12",
+    ofNumberPlaceholder: "e.g. 100",
+    partPlaceholder: "e.g. 18",
+    wholePlaceholder: "e.g. 100",
+    fromPlaceholder: "e.g. 100",
+    toPlaceholder: "e.g. 120",
 
     clear: "Clear",
   },
@@ -54,6 +61,7 @@ export const percentageCalculator = {
 
   content: {
     heading: "About percentage calculations",
+    otherCalculatorsHeading: "Other calculators",
 
     whatTitle: "What is a percentage?",
     whatBody:
@@ -78,8 +86,6 @@ export const percentageCalculator = {
     privacyNote:
       "Everything is worked out in your browser — nothing you enter is sent to a server or saved.",
     privacyLinkText: "Read the privacy policy →",
-
-    crossLinkText: "Need to work out GST instead?",
 
     faqHeading: "Common questions",
     faq: [

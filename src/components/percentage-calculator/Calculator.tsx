@@ -51,6 +51,7 @@ export function Calculator() {
         <NumberField
           label={d.calculator.percent}
           clearLabel={`${d.calculator.clear} ${d.calculator.percent}`}
+          placeholder={d.calculator.percentPlaceholder}
           value={ofValues.percent}
           onChange={(percent) => setOfValues((prev) => ({ ...prev, percent }))}
           onClear={() => setOfValues((prev) => ({ ...prev, percent: "" }))}
@@ -59,6 +60,7 @@ export function Calculator() {
         <NumberField
           label={d.calculator.ofNumber}
           clearLabel={`${d.calculator.clear} ${d.calculator.ofNumber}`}
+          placeholder={d.calculator.ofNumberPlaceholder}
           value={ofValues.number}
           onChange={(number) => setOfValues((prev) => ({ ...prev, number }))}
           onClear={() => setOfValues((prev) => ({ ...prev, number: "" }))}
@@ -83,6 +85,7 @@ export function Calculator() {
         <NumberField
           label={d.calculator.part}
           clearLabel={`${d.calculator.clear} ${d.calculator.part}`}
+          placeholder={d.calculator.partPlaceholder}
           value={isPercentValues.part}
           onChange={(part) => setIsPercentValues((prev) => ({ ...prev, part }))}
           onClear={() => setIsPercentValues((prev) => ({ ...prev, part: "" }))}
@@ -91,6 +94,7 @@ export function Calculator() {
         <NumberField
           label={d.calculator.whole}
           clearLabel={`${d.calculator.clear} ${d.calculator.whole}`}
+          placeholder={d.calculator.wholePlaceholder}
           value={isPercentValues.whole}
           onChange={(whole) => setIsPercentValues((prev) => ({ ...prev, whole }))}
           onClear={() => setIsPercentValues((prev) => ({ ...prev, whole: "" }))}
@@ -115,6 +119,7 @@ export function Calculator() {
         <NumberField
           label={d.calculator.from}
           clearLabel={`${d.calculator.clear} ${d.calculator.from}`}
+          placeholder={d.calculator.fromPlaceholder}
           value={changeValues.from}
           onChange={(from) => setChangeValues((prev) => ({ ...prev, from }))}
           onClear={() => setChangeValues((prev) => ({ ...prev, from: "" }))}
@@ -123,6 +128,7 @@ export function Calculator() {
         <NumberField
           label={d.calculator.to}
           clearLabel={`${d.calculator.clear} ${d.calculator.to}`}
+          placeholder={d.calculator.toPlaceholder}
           value={changeValues.to}
           onChange={(to) => setChangeValues((prev) => ({ ...prev, to }))}
           onClear={() => setChangeValues((prev) => ({ ...prev, to: "" }))}

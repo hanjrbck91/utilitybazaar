@@ -8,6 +8,11 @@ import { cn } from "@/lib/cn";
 interface NumberFieldProps {
   label: string;
   clearLabel: string;
+  /**
+   * A contextual example shown when the field is empty (e.g. "e.g. 18") —
+   * help text only, never written into `value` or used in a calculation.
+   */
+  placeholder: string;
   /** Raw numeric string the user has typed (digits, optional single dot, optional leading "-"). */
   value: string;
   onChange: (raw: string) => void;
@@ -48,7 +53,15 @@ function toDisplay(raw: string): string {
  * Otherwise the same interaction as the GST calculator's amount field:
  * live Indian digit grouping, a clear button, and Escape-to-clear.
  */
-export function NumberField({ label, clearLabel, value, onChange, onClear, error }: NumberFieldProps) {
+export function NumberField({
+  label,
+  clearLabel,
+  placeholder,
+  value,
+  onChange,
+  onClear,
+  error,
+}: NumberFieldProps) {
   const inputId = useId();
   const errorId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -123,7 +136,7 @@ export function NumberField({ label, clearLabel, value, onChange, onClear, error
           autoCorrect="off"
           spellCheck={false}
           enterKeyHint="done"
-          placeholder="0"
+          placeholder={placeholder}
           value={toDisplay(value)}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
@@ -131,25 +144,28 @@ export function NumberField({ label, clearLabel, value, onChange, onClear, error
           aria-describedby={hasError ? errorId : undefined}
           className={cn(
             "w-full min-w-0 bg-transparent py-4 font-mono text-2xl tabular-nums tracking-tight text-text outline-none",
-            "placeholder:text-muted/40 sm:text-3xl",
+            "sm:text-3xl",
+            // The placeholder is a short example ("e.g. 12"), not a number
+            // being typed — shrink it back to a plain, non-mono size so it
+            // reads as a hint and never crowds or clips inside the field.
+            "placeholder:font-sans placeholder:text-sm placeholder:tracking-normal placeholder:text-muted/50",
           )}
         />
-        <button
-          type="button"
-          onClick={clearAndFocus}
-          aria-label={clearLabel}
-          aria-hidden={!filled}
-          tabIndex={filled ? 0 : -1}
-          className={cn(
-            "flex size-9 shrink-0 items-center justify-center rounded-pill text-muted",
-            "transition-[opacity,color,background-color,transform] duration-150 ease-out",
-            "hover:bg-surface-sunken hover:text-text active:scale-95",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
-            filled ? "opacity-100" : "pointer-events-none opacity-0",
-          )}
-        >
-          <X className="size-4" aria-hidden="true" />
-        </button>
+        {filled && (
+          <button
+            type="button"
+            onClick={clearAndFocus}
+            aria-label={clearLabel}
+            className={cn(
+              "flex size-9 shrink-0 items-center justify-center rounded-pill text-muted",
+              "transition-[color,background-color,transform] duration-150 ease-out",
+              "hover:bg-surface-sunken hover:text-text active:scale-95",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
+            )}
+          >
+            <X className="size-4" aria-hidden="true" />
+          </button>
+        )}
       </div>
 
       <p
