@@ -2,7 +2,6 @@
 
 import { ChevronDown } from "lucide-react";
 import { formatINR, type GstBreakdown } from "@/lib/gst";
-import { buildShareText } from "@/lib/gst/share";
 import { interpolate } from "@/lib/i18n";
 import { useDictionary } from "@/components/LocaleProvider";
 import { CopyButton } from "@/components/CopyButton";
@@ -100,7 +99,7 @@ export function ResultCard({ breakdown }: ResultCardProps) {
         </div>
 
         <CopyButton
-          getText={() => buildShareText({ breakdown, dictionary: d })}
+          getText={() => heroValue}
           label={d.copy.label}
           copiedLabel={d.copy.copied}
           failedLabel={d.copy.failed}

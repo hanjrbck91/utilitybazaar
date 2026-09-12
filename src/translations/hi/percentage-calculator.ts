@@ -56,14 +56,6 @@ export const percentageCalculator = {
     difference: "अंतर",
   },
 
-  copyText: {
-    of: "{number} का {percent}% = {result}",
-    isPercent: "{part}, {whole} का {result}% है",
-    changeIncrease: "{from} से {to} तक % बदलाव = {result}% बढ़ोतरी",
-    changeDecrease: "{from} से {to} तक % बदलाव = {result}% कमी",
-    changeNone: "{from} से {to} तक कोई % बदलाव नहीं",
-  },
-
   errors: {
     EMPTY: "संख्या भरें।",
     NOT_A_NUMBER: "सही संख्या भरें।",

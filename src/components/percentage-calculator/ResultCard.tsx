@@ -6,35 +6,6 @@ import { useDictionary } from "@/components/LocaleProvider";
 import { CopyButton } from "@/components/CopyButton";
 import { cn } from "@/lib/cn";
 
-/** Plain-text, one-line summary of a result — what the copy button copies. */
-function buildCopyText(result: PercentageResult, d: PercentageDictionary): string {
-  if (result.mode === "of") {
-    return interpolate(d.copyText.of, {
-      percent: result.percent,
-      number: formatNumber(result.number),
-      result: formatNumber(result.result),
-    });
-  }
-  if (result.mode === "isPercent") {
-    return interpolate(d.copyText.isPercent, {
-      part: formatNumber(result.part),
-      whole: formatNumber(result.whole),
-      result: formatNumber(result.result),
-    });
-  }
-  const template =
-    result.direction === "increase"
-      ? d.copyText.changeIncrease
-      : result.direction === "decrease"
-        ? d.copyText.changeDecrease
-        : d.copyText.changeNone;
-  return interpolate(template, {
-    from: formatNumber(result.from),
-    to: formatNumber(result.to),
-    result: formatNumber(result.result),
-  });
-}
-
 interface ResultCardProps {
   result: PercentageResult | null;
 }
@@ -111,7 +82,7 @@ export function ResultCard({ result }: ResultCardProps) {
         </div>
 
         <CopyButton
-          getText={() => buildCopyText(result, d)}
+          getText={() => heroValue}
           label={d.copy.label}
           copiedLabel={d.copy.copied}
           failedLabel={d.copy.failed}
