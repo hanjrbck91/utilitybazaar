@@ -185,7 +185,11 @@ export function Calculator() {
   return (
     <section
       aria-label={d.app.calculatorLabel}
-      className="mx-auto w-full max-w-[464px] rounded-card border border-line bg-surface p-5 shadow-card sm:p-6"
+      // Wider than GST's card at sm+: the "change" sentence ("What is the
+      // % change from [ ] to [ ]?") needs the extra room to stay on one
+      // line instead of wrapping mid-sentence. Matches the page's own
+      // responsive growth, so it never exceeds the space already there.
+      className="mx-auto w-full max-w-[464px] rounded-card border border-line bg-surface p-5 shadow-card sm:max-w-xl sm:p-6 lg:max-w-2xl"
     >
       <div className="space-y-5">
         <SegmentedControl<PercentageMode>
