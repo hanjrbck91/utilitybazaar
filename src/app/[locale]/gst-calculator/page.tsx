@@ -60,7 +60,7 @@ export default async function CalculatorPage({
   if (!isLocale(locale)) notFound();
 
   return (
-    <main className="mx-auto flex w-full max-w-[464px] flex-1 flex-col px-5 pb-20 pt-10 sm:pt-16 lg:pt-24">
+    <main className="mx-auto flex w-full max-w-[464px] flex-1 flex-col px-5 pb-20 pt-10 sm:max-w-xl sm:pt-16 lg:max-w-2xl lg:pt-24">
       <script
         type="application/ld+json"
         // Built from static, non-user data — see lib/seo/jsonld.ts.

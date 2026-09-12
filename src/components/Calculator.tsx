@@ -88,7 +88,11 @@ export function Calculator() {
   return (
     <section
       aria-label={d.app.calculatorLabel}
-      className="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6"
+      // Capped independently of the page's own max-width: the page grows
+      // to give supporting content room to breathe on larger screens, but
+      // the tool itself stays a focused, comfortably-sized card rather
+      // than stretching edge to edge.
+      className="mx-auto w-full max-w-[464px] rounded-card border border-line bg-surface p-5 shadow-card sm:p-6"
     >
       <div className="space-y-5">
         <AmountField

@@ -24,7 +24,7 @@ export function StaticPage({
   const d = getDictionary("en");
 
   return (
-    <main className="mx-auto flex w-full max-w-[464px] flex-1 flex-col px-5 pb-20 pt-10 sm:pt-16 lg:pt-24">
+    <main className="mx-auto flex w-full max-w-[464px] flex-1 flex-col px-5 pb-20 pt-10 sm:max-w-xl sm:pt-16 lg:max-w-2xl lg:pt-24">
       <Link
         href={calculatorPath("en")}
         className="mb-6 -ml-1 inline-flex w-fit items-center gap-1.5 rounded-[7px] px-1 py-1 text-sm text-muted transition-colors hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
