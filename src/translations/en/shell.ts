@@ -23,6 +23,7 @@ export const shell = {
     terms: "Terms",
     gstCalculator: "GST Calculator",
     percentageCalculator: "Percentage Calculator",
+    otherCalculators: "Other calculators",
   },
 
   about: {

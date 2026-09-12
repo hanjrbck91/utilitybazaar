@@ -1,21 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import {
   tryCalculatePercentage,
   validateNonZero,
   validateNumber,
   type PercentageMode,
   type PercentageResult,
+  type ValidationResult,
 } from "@/lib/percentage";
 import { type PercentageDictionary } from "@/lib/i18n";
 import { useDictionary } from "@/components/LocaleProvider";
 import { SegmentedControl } from "@/components/SegmentedControl";
-import { NumberField } from "./NumberField";
+import { InlineNumberField } from "./InlineNumberField";
 import { ResultCard } from "./ResultCard";
 
 export function Calculator() {
   const d = useDictionary<PercentageDictionary>();
+  const errorId = useId();
 
   const [mode, setMode] = useState<PercentageMode>("of");
 
@@ -32,111 +34,153 @@ export function Calculator() {
   ];
 
   let result: PercentageResult | null = null;
-  let fields: React.ReactNode;
+  let checkA: ValidationResult;
+  let checkB: ValidationResult;
+  /** Raw input for whichever field `checkA`/`checkB` describe — used only to decide when to surface an error. */
+  let rawA: string;
+  let rawB: string;
+  let lead: string | null;
+  let mid: string;
+  let tail: string;
+  let sentence: React.ReactNode;
 
   if (mode === "of") {
-    const percentCheck = validateNumber(ofValues.percent);
-    const numberCheck = validateNumber(ofValues.number);
-    if (percentCheck.valid && numberCheck.valid) {
+    checkA = validateNumber(ofValues.percent);
+    checkB = validateNumber(ofValues.number);
+    rawA = ofValues.percent;
+    rawB = ofValues.number;
+    lead = d.calculator.ofLead;
+    mid = d.calculator.ofMid;
+    tail = d.calculator.ofTail;
+
+    if (checkA.valid && checkB.valid) {
       const outcome = tryCalculatePercentage({
         mode: "of",
-        percent: percentCheck.value,
-        number: numberCheck.value,
+        percent: checkA.value,
+        number: checkB.value,
       });
       result = outcome.ok ? outcome.data : null;
     }
 
-    fields = (
-      <div className="grid grid-cols-2 gap-3">
-        <NumberField
-          label={d.calculator.percent}
-          clearLabel={`${d.calculator.clear} ${d.calculator.percent}`}
+    sentence = (
+      <>
+        {lead && <span>{lead}</span>}
+        <InlineNumberField
+          ariaLabel={d.calculator.percent}
           placeholder={d.calculator.percentPlaceholder}
           value={ofValues.percent}
           onChange={(percent) => setOfValues((prev) => ({ ...prev, percent }))}
           onClear={() => setOfValues((prev) => ({ ...prev, percent: "" }))}
-          error={percentCheck.valid ? null : d.errors[percentCheck.code]}
+          hasError={!checkA.valid && ofValues.percent !== ""}
+          describedBy={errorId}
         />
-        <NumberField
-          label={d.calculator.ofNumber}
-          clearLabel={`${d.calculator.clear} ${d.calculator.ofNumber}`}
+        <span>{mid}</span>
+        <InlineNumberField
+          ariaLabel={d.calculator.ofNumber}
           placeholder={d.calculator.ofNumberPlaceholder}
           value={ofValues.number}
           onChange={(number) => setOfValues((prev) => ({ ...prev, number }))}
           onClear={() => setOfValues((prev) => ({ ...prev, number: "" }))}
-          error={numberCheck.valid ? null : d.errors[numberCheck.code]}
+          hasError={!checkB.valid && ofValues.number !== ""}
+          describedBy={errorId}
         />
-      </div>
+        <span>{tail}</span>
+      </>
     );
   } else if (mode === "isPercent") {
-    const partCheck = validateNumber(isPercentValues.part);
-    const wholeCheck = validateNonZero(isPercentValues.whole);
-    if (partCheck.valid && wholeCheck.valid) {
+    checkA = validateNumber(isPercentValues.part);
+    checkB = validateNonZero(isPercentValues.whole);
+    rawA = isPercentValues.part;
+    rawB = isPercentValues.whole;
+    lead = null;
+    mid = d.calculator.isPercentMid;
+    tail = d.calculator.isPercentTail;
+
+    if (checkA.valid && checkB.valid) {
       const outcome = tryCalculatePercentage({
         mode: "isPercent",
-        part: partCheck.value,
-        whole: wholeCheck.value,
+        part: checkA.value,
+        whole: checkB.value,
       });
       result = outcome.ok ? outcome.data : null;
     }
 
-    fields = (
-      <div className="grid grid-cols-2 gap-3">
-        <NumberField
-          label={d.calculator.part}
-          clearLabel={`${d.calculator.clear} ${d.calculator.part}`}
+    sentence = (
+      <>
+        <InlineNumberField
+          ariaLabel={d.calculator.part}
           placeholder={d.calculator.partPlaceholder}
           value={isPercentValues.part}
           onChange={(part) => setIsPercentValues((prev) => ({ ...prev, part }))}
           onClear={() => setIsPercentValues((prev) => ({ ...prev, part: "" }))}
-          error={partCheck.valid ? null : d.errors[partCheck.code]}
+          hasError={!checkA.valid && isPercentValues.part !== ""}
+          describedBy={errorId}
         />
-        <NumberField
-          label={d.calculator.whole}
-          clearLabel={`${d.calculator.clear} ${d.calculator.whole}`}
+        <span>{mid}</span>
+        <InlineNumberField
+          ariaLabel={d.calculator.whole}
           placeholder={d.calculator.wholePlaceholder}
           value={isPercentValues.whole}
           onChange={(whole) => setIsPercentValues((prev) => ({ ...prev, whole }))}
           onClear={() => setIsPercentValues((prev) => ({ ...prev, whole: "" }))}
-          error={wholeCheck.valid ? null : d.errors[wholeCheck.code]}
+          hasError={!checkB.valid && isPercentValues.whole !== ""}
+          describedBy={errorId}
         />
-      </div>
+        <span>{tail}</span>
+      </>
     );
   } else {
-    const fromCheck = validateNonZero(changeValues.from);
-    const toCheck = validateNumber(changeValues.to);
-    if (fromCheck.valid && toCheck.valid) {
+    checkA = validateNonZero(changeValues.from);
+    checkB = validateNumber(changeValues.to);
+    rawA = changeValues.from;
+    rawB = changeValues.to;
+    lead = d.calculator.changeLead;
+    mid = d.calculator.changeMid;
+    tail = d.calculator.changeTail;
+
+    if (checkA.valid && checkB.valid) {
       const outcome = tryCalculatePercentage({
         mode: "change",
-        from: fromCheck.value,
-        to: toCheck.value,
+        from: checkA.value,
+        to: checkB.value,
       });
       result = outcome.ok ? outcome.data : null;
     }
 
-    fields = (
-      <div className="grid grid-cols-2 gap-3">
-        <NumberField
-          label={d.calculator.from}
-          clearLabel={`${d.calculator.clear} ${d.calculator.from}`}
+    sentence = (
+      <>
+        {lead && <span>{lead}</span>}
+        <InlineNumberField
+          ariaLabel={d.calculator.from}
           placeholder={d.calculator.fromPlaceholder}
           value={changeValues.from}
           onChange={(from) => setChangeValues((prev) => ({ ...prev, from }))}
           onClear={() => setChangeValues((prev) => ({ ...prev, from: "" }))}
-          error={fromCheck.valid ? null : d.errors[fromCheck.code]}
+          hasError={!checkA.valid && changeValues.from !== ""}
+          describedBy={errorId}
         />
-        <NumberField
-          label={d.calculator.to}
-          clearLabel={`${d.calculator.clear} ${d.calculator.to}`}
+        <span>{mid}</span>
+        <InlineNumberField
+          ariaLabel={d.calculator.to}
           placeholder={d.calculator.toPlaceholder}
           value={changeValues.to}
           onChange={(to) => setChangeValues((prev) => ({ ...prev, to }))}
           onClear={() => setChangeValues((prev) => ({ ...prev, to: "" }))}
-          error={toCheck.valid ? null : d.errors[toCheck.code]}
+          hasError={!checkB.valid && changeValues.to !== ""}
+          describedBy={errorId}
         />
-      </div>
+        <span>{tail}</span>
+      </>
     );
   }
+
+  // Only one error shows at a time — whichever field the reader is most
+  // likely mid-typing in, left to right.
+  const activeError = !checkA.valid && rawA !== ""
+    ? d.errors[checkA.code]
+    : !checkB.valid && rawB !== ""
+      ? d.errors[checkB.code]
+      : null;
 
   return (
     <section
@@ -152,7 +196,17 @@ export function Calculator() {
           onChange={setMode}
         />
 
-        {fields}
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-2.5 text-base font-medium leading-relaxed text-text sm:text-lg">
+          {sentence}
+        </div>
+
+        <p
+          id={errorId}
+          role={activeError ? "alert" : undefined}
+          className="min-h-5 px-0.5 text-xs text-danger motion-safe:transition-opacity"
+        >
+          {activeError}
+        </p>
       </div>
 
       <div className="mt-5">

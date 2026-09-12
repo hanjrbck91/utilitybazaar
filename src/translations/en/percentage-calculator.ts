@@ -31,6 +31,23 @@ export const percentageCalculator = {
     toPlaceholder: "e.g. 120",
 
     clear: "Clear",
+
+    // Sentence fragments the two number fields sit inside, so the mode
+    // reads as a plain question rather than a labelled form. The field
+    // order (which fragment comes before/after which input) is fixed in
+    // the component; only the connecting words are localized here.
+    ofLead: "What is",
+    ofMid: "% of",
+    ofTail: "?",
+
+    // "isPercent" has no lead fragment — the sentence opens directly on
+    // the first input in every locale, so there is nothing to localize.
+    isPercentMid: "is what % of",
+    isPercentTail: "?",
+
+    changeLead: "What is the % change from",
+    changeMid: "to",
+    changeTail: "?",
   },
 
   result: {
@@ -61,7 +78,6 @@ export const percentageCalculator = {
 
   content: {
     heading: "About percentage calculations",
-    otherCalculatorsHeading: "Other calculators",
 
     whatTitle: "What is a percentage?",
     whatBody:

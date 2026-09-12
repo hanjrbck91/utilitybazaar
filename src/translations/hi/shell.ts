@@ -18,6 +18,7 @@ export const shell = {
     terms: "शर्तें",
     gstCalculator: "GST कैलकुलेटर",
     percentageCalculator: "प्रतिशत कैलकुलेटर",
+    otherCalculators: "अन्य कैलकुलेटर",
   },
 
   about: {

@@ -31,6 +31,17 @@ export const percentageCalculator = {
     toPlaceholder: "जैसे, 120",
 
     clear: "हटाएँ",
+
+    ofLead: "यह जानें,",
+    ofMid: "% होता है",
+    ofTail: "का कितना?",
+
+    isPercentMid: ",",
+    isPercentTail: "का कितना % है?",
+
+    changeLead: "देखें,",
+    changeMid: "से",
+    changeTail: "तक % बदलाव कितना है?",
   },
 
   result: {
@@ -61,7 +72,6 @@ export const percentageCalculator = {
 
   content: {
     heading: "प्रतिशत की गणना के बारे में",
-    otherCalculatorsHeading: "अन्य कैलकुलेटर",
 
     whatTitle: "प्रतिशत क्या है?",
     whatBody:

@@ -6,6 +6,7 @@ import { LocaleProvider } from "@/components/LocaleProvider";
 import { PageHeader } from "@/components/PageHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Calculator } from "@/components/gst-calculator/Calculator";
+import { OtherCalculators } from "@/components/gst-calculator/OtherCalculators";
 import { SupportingContent } from "@/components/gst-calculator/SupportingContent";
 import { isLocale } from "@/lib/i18n";
 import {
@@ -84,6 +85,7 @@ export default async function CalculatorPage({
       <LocaleProvider initialLocale={locale}>
         <PageHeader />
         <Calculator />
+        <OtherCalculators />
         {/* Advertising, when configured, sits after the whole tool —
             never between a control and its result. */}
         <AdSlot slot="calculator-below" />
