@@ -1,6 +1,6 @@
 import { absoluteUrl } from "../config.ts";
-import { LOCALE_TAGS, getDictionary, type Locale } from "../i18n/index.ts";
-import { calculatorPath } from "../routes.ts";
+import { LOCALE_TAGS, getDictionary, getPercentageDictionary, type Locale } from "../i18n/index.ts";
+import { calculatorPath, percentageCalculatorPath } from "../routes.ts";
 import { SITE_NAME } from "./metadata.ts";
 
 /**
@@ -34,6 +34,24 @@ export function buildCalculatorJsonLd(locale: Locale): WebApplicationJsonLd {
     "@type": "WebApplication",
     name: d.seo.title,
     url: absoluteUrl(calculatorPath(locale)),
+    description: d.seo.description,
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    inLanguage: LOCALE_TAGS[locale],
+    isAccessibleForFree: true,
+  };
+}
+
+/** Same shape as {@link buildCalculatorJsonLd}, for the Percentage Calculator. */
+export function buildPercentageCalculatorJsonLd(locale: Locale): WebApplicationJsonLd {
+  const d = getPercentageDictionary(locale);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: d.seo.title,
+    url: absoluteUrl(percentageCalculatorPath(locale)),
     description: d.seo.description,
     applicationCategory: "FinanceApplication",
     operatingSystem: "Any",
@@ -92,6 +110,21 @@ export interface FaqJsonLd {
 
 export function buildFaqJsonLd(locale: Locale): FaqJsonLd {
   const d = getDictionary(locale);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: d.content.faq.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+}
+
+/** Same shape as {@link buildFaqJsonLd}, for the Percentage Calculator. */
+export function buildPercentageFaqJsonLd(locale: Locale): FaqJsonLd {
+  const d = getPercentageDictionary(locale);
 
   return {
     "@context": "https://schema.org",

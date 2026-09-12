@@ -21,6 +21,8 @@ export const shell = {
     about: "About",
     privacy: "Privacy",
     terms: "Terms",
+    gstCalculator: "GST Calculator",
+    percentageCalculator: "Percentage Calculator",
   },
 
   about: {

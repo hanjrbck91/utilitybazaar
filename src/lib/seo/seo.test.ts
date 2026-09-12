@@ -2,20 +2,29 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { SITE_URL } from "../config.ts";
-import { LOCALES, getDictionary } from "../i18n/index.ts";
+import { LOCALES, getDictionary, getPercentageDictionary } from "../i18n/index.ts";
 import {
   STATIC_PATHS,
   calculatorLanguageAlternates,
   calculatorPath,
   indexablePaths,
+  percentageCalculatorLanguageAlternates,
+  percentageCalculatorPath,
 } from "../routes.ts";
 import {
   buildCalculatorJsonLd,
   buildFaqJsonLd,
+  buildPercentageCalculatorJsonLd,
+  buildPercentageFaqJsonLd,
   buildWebSiteJsonLd,
   serializeJsonLd,
 } from "./jsonld.ts";
-import { buildCalculatorSeo, buildStaticPageSeo, toOpenGraphLocale } from "./metadata.ts";
+import {
+  buildCalculatorSeo,
+  buildPercentageCalculatorSeo,
+  buildStaticPageSeo,
+  toOpenGraphLocale,
+} from "./metadata.ts";
 import { buildRobots, buildSitemap } from "./sitemap.ts";
 
 // --- routes -----------------------------------------------------------
@@ -30,6 +39,8 @@ test("indexable paths are unique and rooted", () => {
   assert.deepEqual(paths, [
     "/en/gst-calculator",
     "/hi/gst-calculator",
+    "/en/percentage-calculator",
+    "/hi/percentage-calculator",
     "/about",
     "/privacy",
     "/terms",
@@ -44,6 +55,18 @@ test("hreflang map covers every locale plus x-default pointing at English", () =
     "en-IN": "/en/gst-calculator",
     "hi-IN": "/hi/gst-calculator",
     "x-default": "/en/gst-calculator",
+  });
+});
+
+test("Percentage Calculator: localized routes and hreflang map", () => {
+  assert.equal(percentageCalculatorPath("en"), "/en/percentage-calculator");
+  assert.equal(percentageCalculatorPath("hi"), "/hi/percentage-calculator");
+
+  const alternates = percentageCalculatorLanguageAlternates();
+  assert.deepEqual(alternates, {
+    "en-IN": "/en/percentage-calculator",
+    "hi-IN": "/hi/percentage-calculator",
+    "x-default": "/en/percentage-calculator",
   });
 });
 
@@ -110,6 +133,67 @@ test("Twitter card mirrors the page", () => {
   assert.equal(seo.twitter.card, "summary_large_image");
   assert.equal(seo.twitter.title, seo.title);
   assert.equal(seo.twitter.description, seo.description);
+});
+
+test("Percentage Calculator: English metadata targets the primary intent", () => {
+  const seo = buildPercentageCalculatorSeo("en");
+  assert.equal(seo.title, "Percentage Calculator — Calculate Percentages Online");
+  for (const term of ["percentage", "increase", "decrease"]) {
+    assert.match(seo.description, new RegExp(term, "i"), `description missing ${term}`);
+  }
+});
+
+test("Percentage Calculator: Hindi metadata is genuinely Hindi", () => {
+  const seo = buildPercentageCalculatorSeo("hi");
+  assert.match(seo.title, /कैलकुलेटर/);
+  assert.notEqual(seo.title, buildPercentageCalculatorSeo("en").title);
+  assert.match(seo.description, /[ऀ-ॿ]/, "description has no Devanagari");
+});
+
+test("Percentage Calculator: descriptions are a sensible length, canonicals are absolute", () => {
+  for (const locale of LOCALES) {
+    const seo = buildPercentageCalculatorSeo(locale);
+    assert.ok(seo.title.length <= 65, `${locale} title too long: ${seo.title.length}`);
+    assert.ok(seo.description.length >= 80 && seo.description.length <= 220);
+    assert.equal(seo.canonical, `${SITE_URL}${percentageCalculatorPath(locale)}`);
+    assert.equal(seo.canonical, seo.openGraph.url);
+  }
+});
+
+test("Percentage Calculator: hreflang is reciprocal between locales", () => {
+  const en = buildPercentageCalculatorSeo("en");
+  const hi = buildPercentageCalculatorSeo("hi");
+  assert.deepEqual(en.languages, hi.languages);
+  assert.equal(en.languages["x-default"], `${SITE_URL}/en/percentage-calculator`);
+});
+
+test("Percentage Calculator: JSON-LD describes the tool honestly", () => {
+  for (const locale of LOCALES) {
+    const data = buildPercentageCalculatorJsonLd(locale);
+    assert.equal(data["@type"], "WebApplication");
+    assert.equal(data.url, `${SITE_URL}${percentageCalculatorPath(locale)}`);
+    assert.equal(data.inLanguage, locale === "en" ? "en-IN" : "hi-IN");
+    assert.ok(data.name.length > 0);
+    assert.ok(data.description.length > 0);
+  }
+});
+
+test("Percentage Calculator: FAQ JSON-LD mirrors the visible FAQ exactly, in both locales", () => {
+  for (const locale of LOCALES) {
+    const data = buildPercentageFaqJsonLd(locale);
+    const faq = getPercentageDictionary(locale).content.faq;
+
+    assert.equal(data["@type"], "FAQPage");
+    assert.ok(faq.length >= 4 && faq.length <= 6, "keep the FAQ short");
+    assert.equal(data.mainEntity.length, faq.length);
+
+    data.mainEntity.forEach((entry, i) => {
+      assert.equal(entry.name, faq[i].q);
+      assert.equal(entry.acceptedAnswer.text, faq[i].a);
+    });
+
+    assert.doesNotMatch(serializeJsonLd(data), /</, "unescaped < breaks the script tag");
+  }
 });
 
 test("supporting pages carry a canonical but claim no translations", () => {
@@ -260,13 +344,31 @@ test("sitemap excludes the root redirect and any internal route", () => {
 
 test("sitemap carries hreflang alternates on the calculator pages only", () => {
   const entries = buildSitemap();
-  const calculators = entries.filter((entry) => entry.url.includes("gst-calculator"));
-  const supporting = entries.filter((entry) => !entry.url.includes("gst-calculator"));
+  const gstCalculators = entries.filter((entry) => entry.url.includes("/gst-calculator"));
+  const percentageCalculators = entries.filter((entry) =>
+    entry.url.includes("/percentage-calculator"),
+  );
+  const supporting = entries.filter(
+    (entry) => !entry.url.includes("/gst-calculator") && !entry.url.includes("/percentage-calculator"),
+  );
 
-  assert.equal(calculators.length, 2);
-  for (const entry of calculators) {
+  assert.equal(gstCalculators.length, 2);
+  assert.equal(percentageCalculators.length, 2);
+  for (const entry of [...gstCalculators, ...percentageCalculators]) {
     assert.deepEqual(Object.keys(entry.alternates?.languages ?? {}), ["en-IN", "hi-IN"]);
     assert.equal(entry.priority, 1);
+  }
+  // Each tool's own hreflang set stays self-contained — the two calculators
+  // must never cross-reference each other's URLs.
+  for (const entry of gstCalculators) {
+    for (const url of Object.values(entry.alternates?.languages ?? {})) {
+      assert.match(url, /\/gst-calculator$/);
+    }
+  }
+  for (const entry of percentageCalculators) {
+    for (const url of Object.values(entry.alternates?.languages ?? {})) {
+      assert.match(url, /\/percentage-calculator$/);
+    }
   }
   for (const entry of supporting) {
     assert.equal(entry.alternates, undefined);

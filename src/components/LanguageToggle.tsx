@@ -7,6 +7,20 @@ import { cn } from "@/lib/cn";
 import { LOCALES, getDictionary, getLocaleTag, type Locale } from "@/lib/i18n";
 import { calculatorPath } from "@/lib/routes";
 
+interface LanguageToggleProps {
+  /**
+   * Each locale's URL for the current page. Defaults to the GST
+   * calculator's paths, so every existing call site is unaffected; a
+   * different tool's page passes its own paths so switching language
+   * keeps the reader on that same tool.
+   *
+   * Plain data rather than a path function: this component is rendered
+   * from a Server Component page, which can pass strings across that
+   * boundary but not functions.
+   */
+  hrefs?: Record<Locale, string>;
+}
+
 /**
  * English | हिन्दी
  *
@@ -14,7 +28,7 @@ import { calculatorPath } from "@/lib/routes";
  * so a crawler can follow both and a reader can bookmark or share the
  * one they want. Deliberately the quietest control on the page.
  */
-export function LanguageToggle() {
+export function LanguageToggle({ hrefs }: LanguageToggleProps = {}) {
   const { locale, d } = useLocale();
 
   return (
@@ -29,7 +43,7 @@ export function LanguageToggle() {
               </span>
             )}
             <Link
-              href={calculatorPath(code)}
+              href={hrefs?.[code] ?? calculatorPath(code)}
               hrefLang={getLocaleTag(code)}
               aria-current={active ? "page" : undefined}
               onClick={() => {

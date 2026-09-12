@@ -1,4 +1,4 @@
-import { en } from "../../translations/en/index.ts";
+import { en, enPercentage } from "../../translations/en/index.ts";
 
 /**
  * The translation contract, derived from the English dictionary.
@@ -6,6 +6,9 @@ import { en } from "../../translations/en/index.ts";
  * build error rather than an untranslated string at runtime.
  */
 export type Dictionary = typeof en;
+
+/** Same contract, for the Percentage Calculator's own dictionary. */
+export type PercentageDictionary = typeof enPercentage;
 
 /** Supported locales. `en` is the default. */
 export const LOCALES = ["en", "hi"] as const;

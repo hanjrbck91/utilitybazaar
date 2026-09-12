@@ -1,4 +1,5 @@
 import { gstCalculator } from "./gst-calculator.ts";
+import { percentageCalculator } from "./percentage-calculator.ts";
 import { shell } from "./shell.ts";
 
 /**
@@ -20,4 +21,17 @@ export const en = {
   ...shell,
   ...gstCalculator,
   app: { ...shell.app, ...gstCalculator.app },
+};
+
+/**
+ * The Percentage Calculator's own dictionary — shell plus its tool
+ * module, kept entirely separate from `en` above. Each tool merges only
+ * with the shell, never with another tool, so adding a tool never risks
+ * colliding same-named keys (`calculator`, `result`, `errors`, `content`,
+ * `seo`, ...) between two unrelated calculators.
+ */
+export const enPercentage = {
+  ...shell,
+  ...percentageCalculator,
+  app: { ...shell.app, ...percentageCalculator.app },
 };

@@ -139,6 +139,8 @@ export const gstCalculator = {
       "Everything is worked out in your browser — nothing you enter is sent to a server or saved.",
     privacyLinkText: "Read the privacy policy →",
 
+    crossLinkText: "Need to work out a plain percentage instead?",
+
     faqHeading: "Common questions",
     faq: [
       {

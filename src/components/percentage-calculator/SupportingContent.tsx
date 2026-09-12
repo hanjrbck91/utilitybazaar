@@ -2,29 +2,25 @@
 
 import Link from "next/link";
 import { useLocale } from "@/components/LocaleProvider";
-import { percentageCalculatorPath, STATIC_PATHS } from "@/lib/routes";
+import { type PercentageDictionary } from "@/lib/i18n";
+import { calculatorPath, STATIC_PATHS } from "@/lib/routes";
 
 /**
- * A short explanation of what the calculator does, below the tool.
- *
- * Enough for a reader who does not already know what "GST-inclusive" or
- * CGST means, and short enough that the calculator stays the point of
- * the page. Not written for a crawler: the Hindi version is written
- * natively rather than translated. Every tax fact here is from official
- * Government of India material (56th GST Council / CBIC Notification
- * 09/2025-Central Tax (Rate)).
+ * A short explanation of what the calculator does, below the tool —
+ * mirrors `gst-calculator/SupportingContent.tsx` in shape, with its own
+ * percentage-specific facts. Ends with a link back to the GST calculator,
+ * the same way the GST page links forward to this one.
  */
 export function SupportingContent() {
-  const { locale, d } = useLocale();
+  const { locale, d } = useLocale<PercentageDictionary>();
   const c = d.content;
 
   const sections = [
-    { title: c.howTitle, body: c.howBody },
-    { title: c.exclusiveTitle, body: c.exclusiveBody },
-    { title: c.inclusiveTitle, body: c.inclusiveBody },
-    { title: c.reverseTitle, body: c.reverseBody },
-    { title: c.splitTitle, body: c.splitBody },
-    { title: c.ratesTitle, body: c.ratesBody },
+    { title: c.whatTitle, body: c.whatBody },
+    { title: c.ofTitle, body: c.ofBody },
+    { title: c.isPercentTitle, body: c.isPercentBody },
+    { title: c.increaseTitle, body: c.increaseBody },
+    { title: c.decreaseTitle, body: c.decreaseBody },
   ];
 
   return (
@@ -57,10 +53,10 @@ export function SupportingContent() {
       <p className="mt-2 px-1 text-xs leading-relaxed text-muted">
         {c.crossLinkText}{" "}
         <Link
-          href={percentageCalculatorPath(locale)}
+          href={calculatorPath(locale)}
           className="rounded-[4px] font-medium text-accent-strong underline underline-offset-2 transition-colors hover:text-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          {d.nav.percentageCalculator}
+          {d.nav.gstCalculator}
         </Link>
       </p>
     </section>

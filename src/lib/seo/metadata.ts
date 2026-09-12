@@ -1,6 +1,11 @@
 import { SITE_URL, absoluteUrl } from "../config.ts";
-import { LOCALE_TAGS, getDictionary, type Locale } from "../i18n/index.ts";
-import { calculatorLanguageAlternates, calculatorPath } from "../routes.ts";
+import { LOCALE_TAGS, getDictionary, getPercentageDictionary, type Locale } from "../i18n/index.ts";
+import {
+  calculatorLanguageAlternates,
+  calculatorPath,
+  percentageCalculatorLanguageAlternates,
+  percentageCalculatorPath,
+} from "../routes.ts";
 
 /**
  * Framework-free description of a page's head.
@@ -45,6 +50,42 @@ export function buildCalculatorSeo(locale: Locale): PageSeo {
 
   const languages: Record<string, string> = {};
   for (const [code, path] of Object.entries(calculatorLanguageAlternates())) {
+    languages[code] = absoluteUrl(path);
+  }
+
+  const alternateLocales = Object.values(LOCALE_TAGS)
+    .filter((tag) => tag !== LOCALE_TAGS[locale])
+    .map(toOpenGraphLocale);
+
+  return {
+    title: d.seo.title,
+    description: d.seo.description,
+    canonical,
+    languages,
+    openGraph: {
+      title: d.seo.title,
+      description: d.seo.description,
+      url: canonical,
+      siteName: SITE_NAME,
+      locale: toOpenGraphLocale(LOCALE_TAGS[locale]),
+      alternateLocales,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: d.seo.title,
+      description: d.seo.description,
+    },
+  };
+}
+
+/** SEO for the Percentage Calculator at a given locale. Same shape as {@link buildCalculatorSeo}. */
+export function buildPercentageCalculatorSeo(locale: Locale): PageSeo {
+  const d = getPercentageDictionary(locale);
+  const canonical = absoluteUrl(percentageCalculatorPath(locale));
+
+  const languages: Record<string, string> = {};
+  for (const [code, path] of Object.entries(percentageCalculatorLanguageAlternates())) {
     languages[code] = absoluteUrl(path);
   }
 

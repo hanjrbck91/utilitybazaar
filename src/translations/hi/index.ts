@@ -1,5 +1,6 @@
-import type { Dictionary } from "../../lib/i18n/types.ts";
+import type { Dictionary, PercentageDictionary } from "../../lib/i18n/types.ts";
 import { gstCalculator } from "./gst-calculator.ts";
+import { percentageCalculator } from "./percentage-calculator.ts";
 import { shell } from "./shell.ts";
 
 /**
@@ -18,4 +19,11 @@ export const hi: Dictionary = {
   ...shell,
   ...gstCalculator,
   app: { ...shell.app, ...gstCalculator.app },
+};
+
+/** The Percentage Calculator's own Hindi dictionary — see `enPercentage`. */
+export const hiPercentage: PercentageDictionary = {
+  ...shell,
+  ...percentageCalculator,
+  app: { ...shell.app, ...percentageCalculator.app },
 };
