@@ -16,8 +16,8 @@ export const shell = {
 
   nav: {
     siteLinks: "Site",
-    calculator: "Calculator",
-    backToCalculator: "Back to the calculator",
+    tools: "Tools",
+    backToHome: "Back to UtilityBazaar",
     about: "About",
     privacy: "Privacy",
     terms: "Terms",
@@ -37,8 +37,8 @@ export const shell = {
     description: "What UtilityBazaar is, and the tools it currently offers.",
     body: [
       "UtilityBazaar is a small collection of simple, practical online tools — everyday calculations made fast, without needing an account or a spreadsheet.",
-      "It currently includes a GST Calculator, for adding, removing and splitting GST on an amount, and a Percentage Calculator, for percentages, shares and the change between two numbers. Both work the same way: enter a value, get an instant, clear result.",
-      "Every tool runs entirely in your browser — nothing you type is sent anywhere. More tools may be added over time, each built to do one job well.",
+      "It currently includes a GST Calculator, for adding, removing and splitting GST on an amount, and a Percentage Calculator, for percentages, shares and the change between two numbers. Both are designed the same way: enter the values you need, and get an instant, clear result.",
+      "The calculations run entirely in your browser, and the values you enter are not sent to our servers. More tools may be added over time, each built to do one job well.",
     ],
   },
 

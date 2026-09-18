@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AdSlot } from "@/components/AdSlot";
-import { STATIC_PATHS, calculatorPath } from "@/lib/routes";
+import { STATIC_PATHS, homePath } from "@/lib/routes";
 import { getDictionary } from "@/lib/i18n";
 
 const FOOTER_LINK =
@@ -26,11 +26,11 @@ export function StaticPage({
   return (
     <main className="mx-auto flex w-full max-w-[464px] flex-1 flex-col px-5 pb-20 pt-10 sm:max-w-xl sm:pt-16 lg:max-w-2xl lg:pt-24">
       <Link
-        href={calculatorPath("en")}
+        href={homePath("en")}
         className="mb-6 -ml-1 inline-flex w-fit items-center gap-1.5 rounded-[7px] px-1 py-1 text-sm text-muted transition-colors hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
-        {d.nav.backToCalculator}
+        {d.nav.backToHome}
       </Link>
 
       <article className="rounded-card border border-line bg-surface p-5 shadow-card sm:p-6">
@@ -53,8 +53,8 @@ export function StaticPage({
           aria-label={d.nav.siteLinks}
           className="flex flex-wrap items-center gap-x-4 px-1 text-xs text-muted"
         >
-          <Link href={calculatorPath("en")} className={FOOTER_LINK}>
-            {d.nav.calculator}
+          <Link href={homePath("en")} className={FOOTER_LINK}>
+            {d.nav.tools}
           </Link>
           <Link href={STATIC_PATHS.about} className={FOOTER_LINK}>
             {d.nav.about}
