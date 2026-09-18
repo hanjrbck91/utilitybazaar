@@ -25,12 +25,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // `/` is not a page of its own: English is the default experience,
-      // so the root sends visitors and crawlers to its canonical URL.
-      { source: "/", destination: "/en/gst-calculator", permanent: true },
-      // A bare locale segment is not a page either — send it to that
-      // locale's calculator so an inbound `/en` or `/hi` link never 404s.
-      { source: "/en", destination: "/en/gst-calculator", permanent: true },
-      { source: "/hi", destination: "/hi/gst-calculator", permanent: true },
+      // so the root sends visitors and crawlers to the homepage's
+      // canonical URL. `/en` and `/hi` are real pages (the tools hub, see
+      // src/app/[locale]/page.tsx) and no longer need a redirect of
+      // their own.
+      { source: "/", destination: "/en", permanent: true },
     ];
   },
 

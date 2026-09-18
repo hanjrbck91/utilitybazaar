@@ -8,6 +8,11 @@ import { LOCALES, LOCALE_TAGS, type Locale } from "./i18n/index.ts";
  * the interface can never drift apart.
  */
 
+/** The homepage / tools hub, localized. */
+export function homePath(locale: Locale): string {
+  return `/${locale}`;
+}
+
 /** The GST calculator, localized. */
 export function calculatorPath(locale: Locale): string {
   return `/${locale}/gst-calculator`;
@@ -30,6 +35,7 @@ export type StaticPath = (typeof STATIC_PATHS)[keyof typeof STATIC_PATHS];
 /** Every path that should be indexable, in sitemap order. */
 export function indexablePaths(): string[] {
   return [
+    ...LOCALES.map(homePath),
     ...LOCALES.map(calculatorPath),
     ...LOCALES.map(percentageCalculatorPath),
     ...Object.values(STATIC_PATHS),
@@ -58,5 +64,15 @@ export function percentageCalculatorLanguageAlternates(): Record<string, string>
     alternates[LOCALE_TAGS[locale]] = percentageCalculatorPath(locale);
   }
   alternates["x-default"] = percentageCalculatorPath("en");
+  return alternates;
+}
+
+/** Same hreflang map as {@link calculatorLanguageAlternates}, for the homepage. */
+export function homeLanguageAlternates(): Record<string, string> {
+  const alternates: Record<string, string> = {};
+  for (const locale of LOCALES) {
+    alternates[LOCALE_TAGS[locale]] = homePath(locale);
+  }
+  alternates["x-default"] = homePath("en");
   return alternates;
 }

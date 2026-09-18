@@ -34,11 +34,11 @@ export const shell = {
 
   about: {
     title: "About",
-    description: "What this GST calculator is, and what it is not.",
+    description: "What UtilityBazaar is, and the tools it currently offers.",
     body: [
-      "This is a small, fast GST calculator for India. Enter an amount, choose whether you are adding or removing GST, pick the rate that applies, and read the result — including the CGST, SGST or IGST split.",
-      "Every calculation runs in your browser. Nothing you type is sent anywhere, and there is no account to create.",
-      "The suggested rates are shortcuts, not a ruling on what applies to your goods or service. Any rate can be entered manually.",
+      "UtilityBazaar is a small collection of simple, practical online tools — everyday calculations made fast, without needing an account or a spreadsheet.",
+      "It currently includes a GST Calculator, for adding, removing and splitting GST on an amount, and a Percentage Calculator, for percentages, shares and the change between two numbers. Both work the same way: enter a value, get an instant, clear result.",
+      "Every tool runs entirely in your browser — nothing you type is sent anywhere. More tools may be added over time, each built to do one job well.",
     ],
   },
 

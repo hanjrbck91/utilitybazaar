@@ -1,17 +1,18 @@
-import { en, enPercentage } from "../../translations/en/index.ts";
-import { hi, hiPercentage } from "../../translations/hi/index.ts";
+import { en, enHome, enPercentage } from "../../translations/en/index.ts";
+import { hi, hiHome, hiPercentage } from "../../translations/hi/index.ts";
 import {
   DEFAULT_LOCALE,
   LOCALES,
   LOCALE_TAGS,
   isLocale,
   type Dictionary,
+  type HomeDictionary,
   type Locale,
   type PercentageDictionary,
 } from "./types.ts";
 
 export { DEFAULT_LOCALE, LOCALES, LOCALE_TAGS, isLocale };
-export type { Dictionary, Locale, PercentageDictionary };
+export type { Dictionary, HomeDictionary, Locale, PercentageDictionary };
 
 const DICTIONARIES: Record<Locale, Dictionary> = { en, hi };
 
@@ -31,6 +32,16 @@ const PERCENTAGE_DICTIONARIES: Record<Locale, PercentageDictionary> = {
 /** Same lookup as {@link getDictionary}, for the Percentage Calculator's own dictionary. */
 export function getPercentageDictionary(locale: unknown): PercentageDictionary {
   return PERCENTAGE_DICTIONARIES[isLocale(locale) ? locale : DEFAULT_LOCALE];
+}
+
+const HOME_DICTIONARIES: Record<Locale, HomeDictionary> = {
+  en: enHome,
+  hi: hiHome,
+};
+
+/** Same lookup as {@link getDictionary}, for the homepage's own dictionary. */
+export function getHomeDictionary(locale: unknown): HomeDictionary {
+  return HOME_DICTIONARIES[isLocale(locale) ? locale : DEFAULT_LOCALE];
 }
 
 /** BCP 47 tag for a locale, with the same safe fallback. */

@@ -1,5 +1,6 @@
-import type { Dictionary, PercentageDictionary } from "../../lib/i18n/types.ts";
+import type { Dictionary, HomeDictionary, PercentageDictionary } from "../../lib/i18n/types.ts";
 import { gstCalculator } from "./gst-calculator.ts";
+import { home } from "./home.ts";
 import { percentageCalculator } from "./percentage-calculator.ts";
 import { shell } from "./shell.ts";
 
@@ -26,4 +27,11 @@ export const hiPercentage: PercentageDictionary = {
   ...shell,
   ...percentageCalculator,
   app: { ...shell.app, ...percentageCalculator.app },
+};
+
+/** The homepage's own Hindi dictionary — see `enHome`. */
+export const hiHome: HomeDictionary = {
+  ...shell,
+  ...home,
+  app: { ...shell.app, ...home.app },
 };

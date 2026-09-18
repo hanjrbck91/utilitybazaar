@@ -1,8 +1,16 @@
 import { SITE_URL, absoluteUrl } from "../config.ts";
-import { LOCALE_TAGS, getDictionary, getPercentageDictionary, type Locale } from "../i18n/index.ts";
+import {
+  LOCALE_TAGS,
+  getDictionary,
+  getHomeDictionary,
+  getPercentageDictionary,
+  type Locale,
+} from "../i18n/index.ts";
 import {
   calculatorLanguageAlternates,
   calculatorPath,
+  homeLanguageAlternates,
+  homePath,
   percentageCalculatorLanguageAlternates,
   percentageCalculatorPath,
 } from "../routes.ts";
@@ -36,7 +44,7 @@ export interface PageSeo {
   };
 }
 
-export const SITE_NAME = "GST Calculator";
+export const SITE_NAME = "UtilityBazaar";
 
 /** Open Graph wants underscored locale tags: `en-IN` -> `en_IN`. */
 export function toOpenGraphLocale(tag: string): string {
@@ -86,6 +94,42 @@ export function buildPercentageCalculatorSeo(locale: Locale): PageSeo {
 
   const languages: Record<string, string> = {};
   for (const [code, path] of Object.entries(percentageCalculatorLanguageAlternates())) {
+    languages[code] = absoluteUrl(path);
+  }
+
+  const alternateLocales = Object.values(LOCALE_TAGS)
+    .filter((tag) => tag !== LOCALE_TAGS[locale])
+    .map(toOpenGraphLocale);
+
+  return {
+    title: d.seo.title,
+    description: d.seo.description,
+    canonical,
+    languages,
+    openGraph: {
+      title: d.seo.title,
+      description: d.seo.description,
+      url: canonical,
+      siteName: SITE_NAME,
+      locale: toOpenGraphLocale(LOCALE_TAGS[locale]),
+      alternateLocales,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: d.seo.title,
+      description: d.seo.description,
+    },
+  };
+}
+
+/** SEO for the homepage / tools hub at a given locale. Same shape as {@link buildCalculatorSeo}. */
+export function buildHomeSeo(locale: Locale): PageSeo {
+  const d = getHomeDictionary(locale);
+  const canonical = absoluteUrl(homePath(locale));
+
+  const languages: Record<string, string> = {};
+  for (const [code, path] of Object.entries(homeLanguageAlternates())) {
     languages[code] = absoluteUrl(path);
   }
 

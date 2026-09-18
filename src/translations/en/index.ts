@@ -1,4 +1,5 @@
 import { gstCalculator } from "./gst-calculator.ts";
+import { home } from "./home.ts";
 import { percentageCalculator } from "./percentage-calculator.ts";
 import { shell } from "./shell.ts";
 
@@ -34,4 +35,14 @@ export const enPercentage = {
   ...shell,
   ...percentageCalculator,
   app: { ...shell.app, ...percentageCalculator.app },
+};
+
+/**
+ * The homepage's own dictionary — shell plus the homepage module, kept
+ * separate from every tool's dictionary the same way `enPercentage` is.
+ */
+export const enHome = {
+  ...shell,
+  ...home,
+  app: { ...shell.app, ...home.app },
 };

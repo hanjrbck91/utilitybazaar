@@ -1,6 +1,6 @@
 import { absoluteUrl, isSiteUrlConfigured } from "../config.ts";
 import { LOCALE_TAGS, LOCALES } from "../i18n/index.ts";
-import { STATIC_PATHS, calculatorPath, percentageCalculatorPath } from "../routes.ts";
+import { STATIC_PATHS, calculatorPath, homePath, percentageCalculatorPath } from "../routes.ts";
 
 export interface SitemapEntry {
   url: string;
@@ -28,6 +28,7 @@ export interface SitemapEntry {
  * sources; bump them only on a real content change.
  */
 const LAST_MODIFIED = {
+  home: "2026-09-18",
   calculator: "2026-08-28",
   percentageCalculator: "2026-09-12",
   supporting: "2026-08-27",
@@ -47,12 +48,22 @@ export interface RobotsRules {
  * rather than a page of its own.
  */
 export function buildSitemap(): SitemapEntry[] {
+  const homeLanguages: Record<string, string> = {};
   const gstLanguages: Record<string, string> = {};
   const percentageLanguages: Record<string, string> = {};
   for (const locale of LOCALES) {
+    homeLanguages[LOCALE_TAGS[locale]] = absoluteUrl(homePath(locale));
     gstLanguages[LOCALE_TAGS[locale]] = absoluteUrl(calculatorPath(locale));
     percentageLanguages[LOCALE_TAGS[locale]] = absoluteUrl(percentageCalculatorPath(locale));
   }
+
+  const home: SitemapEntry[] = LOCALES.map((locale) => ({
+    url: absoluteUrl(homePath(locale)),
+    lastModified: LAST_MODIFIED.home,
+    changeFrequency: "monthly",
+    priority: 1,
+    alternates: { languages: homeLanguages },
+  }));
 
   const calculators: SitemapEntry[] = LOCALES.map((locale) => ({
     url: absoluteUrl(calculatorPath(locale)),
@@ -77,7 +88,7 @@ export function buildSitemap(): SitemapEntry[] {
     priority: 0.3,
   }));
 
-  return [...calculators, ...percentageCalculators, ...supporting];
+  return [...home, ...calculators, ...percentageCalculators, ...supporting];
 }
 
 /**
