@@ -8,6 +8,18 @@ The original product spec for the GST Calculator is in
 [BLUEPRINT_V1.0.md](BLUEPRINT_V1.0.md). This document describes the code
 as it is now.
 
+## 🔒 Frozen foundation (2026-10-06)
+These decisions are accepted. Change them only with an explicit
+milestone that says so:
+- Locale-prefixed routes (`/en/...`, `/hi/...`); `/` → `/en` (308).
+- One folder set per tool (the calculator-module pattern below).
+- `routes.ts` is the only place paths are defined.
+- Metadata is built as plain data (`PageSeo`). JSON-LD is minimal and
+  true. Hand-maintained sitemap `LAST_MODIFIED`.
+- Static pages are English-only, rendered by `StaticPage.tsx`.
+- No backend; user values never leave the browser; analytics uses an
+  allowlist.
+
 ## Stack
 
 | Layer | Choice |
@@ -15,7 +27,7 @@ as it is now.
 | Framework | Next.js 16.3 (App Router) — see `AGENTS.md`: this version differs from older Next.js; read `node_modules/next/dist/docs/` before changing framework-level code |
 | UI | React 19.2, Tailwind CSS 4, `lucide-react` icons |
 | Language | TypeScript |
-| Tests | `node:test` running `.ts` directly (`npm test`), **Node ≥ 22.6** |
+| Tests | `node:test` running `.ts` directly (`npm test`), **Node ≥ 22.6** (verified on 22.23.3); 149 tests |
 | Hosting | Vercel, deployed from GitHub `main` |
 
 ## Directory map

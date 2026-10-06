@@ -16,8 +16,8 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M14.3 Repository Recovery Audit | ✅ | — (audit only) |
 | M14.4.1 Final Cleanup | ✅ | `2acc63d` |
 | M14.4.2 Test / Lint / Build | ✅ | N/A (no fixes needed) |
-| M14.4.3 Production Verification | 🔄 | — |
-| UtilityBazaar Foundation | 🔜 freeze | — |
+| M14.4.3 Production Verification | ✅ | deployed `7aa19ef` |
+| **UtilityBazaar Foundation** | 🔒 **FROZEN** 2026-10-06 | `7aa19ef` + docs |
 | M15 Salary Calculator | 🔜 | — |
 
 ---
@@ -63,8 +63,9 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
   build clean (20 static pages, no warnings), and the built sitemap has
   the new dates.
 
-## M14.4.3 — Production Verification 🔄
-Checked against live `0b1d219` on 2026-10-06:
+## M14.4.3 — Production Verification ✅ (2026-10-06)
+Full browser check run on live `0b1d219`, then repeated on `7aa19ef`
+(Vercel Production deployment "success", 17:03 UTC):
 - `/` → 308 `/en`; all 10 routes return 200.
 - Hub lists both tools in EN and HI with the correct locale links.
 - GST: ₹10,000 + 18% = ₹11,800 and Remove → ₹8,474.58; IGST toggle works.
@@ -75,11 +76,15 @@ Checked against live `0b1d219` on 2026-10-06:
   FAQPage JSON-LD on the calculators.
 - Favicons present; no GST-only site identity; no console errors; all
   requests return 200.
-- **Remaining:** confirm Vercel deploys the pushed `main` and that the live
-  sitemap shows `2026-09-18` for the supporting pages.
+- After deploy: the live sitemap shows `2026-09-18` for
+  about/privacy/terms; GST ₹2,500 + 18% = ₹2,950; HI 20% of 50 = 10.
 
-## UtilityBazaar Foundation 🔜
-Freezes once M14.4.3 is complete.
+## 🔒 UtilityBazaar Foundation — FROZEN (2026-10-06)
+Accepted as-is: architecture, routing, calculator-module pattern, SEO
+foundation, EN/HI structure, static pages. At freeze: 149/149 tests,
+lint clean, build clean, production verified.
+Rules: no feature changes to the foundation. Deferred items live in
+`UTILITYBAZAAR_CURRENT_STATE.md`.
 
 ## M15 — Salary Calculator 🔜
-Next feature. See "Adding a new tool" in the architecture doc.
+Next milestone. Not started. See "Adding a new tool" in the architecture doc.
