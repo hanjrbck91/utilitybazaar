@@ -31,7 +31,7 @@ const LAST_MODIFIED = {
   home: "2026-09-18",
   calculator: "2026-08-28",
   percentageCalculator: "2026-09-12",
-  supporting: "2026-08-27",
+  supporting: "2026-09-18",
 } as const;
 
 export interface RobotsRules {
@@ -41,11 +41,11 @@ export interface RobotsRules {
 
 /**
  * Every indexable URL, absolute, with hreflang alternates on the
- * localized calculator pages.
+ * localized pages (homepage and calculators).
  *
  * Only real routes appear here: no preview paths, no duplicates, and no
- * entry for `/`, which is a permanent redirect to the English calculator
- * rather than a page of its own.
+ * entry for `/`, which is a permanent redirect to the English homepage
+ * (`/en`) rather than a page of its own.
  */
 export function buildSitemap(): SitemapEntry[] {
   const homeLanguages: Record<string, string> = {};
