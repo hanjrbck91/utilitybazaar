@@ -86,9 +86,10 @@ sitemap, canonicals, hreflang maps and in-app links all import from it.
 ### i18n
 - `LOCALES = ["en", "hi"]`, with `en` as the default and `x-default`.
 - Each locale has separate dictionaries for the GST tool, the
-  Percentage tool and the homepage (`getDictionary`,
-  `getPercentageDictionary`, `getHomeDictionary`). An unknown locale
-  falls back to English.
+  Percentage tool, the Salary tool and the homepage (`getDictionary`,
+  `getPercentageDictionary`, `getSalaryDictionary`, `getHomeDictionary`).
+  An unknown locale falls back to English. The Salary dictionary exists,
+  but no page uses it yet (M15.2).
 - Static pages are English-only, so they get a canonical URL but no
   hreflang alternates.
 

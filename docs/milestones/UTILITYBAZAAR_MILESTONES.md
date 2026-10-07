@@ -20,7 +20,8 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | **UtilityBazaar Foundation** | 🔒 **FROZEN** 2026-10-06 | `7aa19ef` + docs |
 | M14.5 Next.js Security Maintenance | ✅ | `3376302` |
 | M15 Salary Calculator | 🔄 | — |
-| M15.1 Salary engine (research + pure engine) | ✅ | see M15.1 entry |
+| M15.1 Salary engine (research + pure engine) | ✅ | `71e6da8` |
+| M15.2 Salary translations (EN/HI) | ✅ | see M15.2 entry |
 
 ---
 
@@ -126,3 +127,35 @@ CTC → in-hand (take-home) salary. Sub-milestones are recorded below.
   No existing file changed.
 - Not yet built: UI, route, translations, SEO and integration (later M15
   steps).
+
+### M15.2 — Salary translations ✅ (2026-10-07)
+- New `src/translations/{en,hi}/salary-calculator.ts`, wired into the
+  existing architecture the same way Percentage is:
+  - `enSalary` / `hiSalary` dictionaries (shell + tool module);
+  - a `SalaryDictionary` type;
+  - a `getSalaryDictionary()` getter.
+  No existing dictionary, shell string or tool changed.
+- **What it covers:** page header, every input and hint, PF modes,
+  gratuity, professional tax, results (monthly/annual, regular month),
+  breakdown, tax working, the explanation strings (including one for
+  each engine flag), every `SalaryErrorCode` plus field-specific
+  out-of-range messages, and actions (reset, show/hide breakdown, more
+  details).
+- **Deliberately not added:**
+  - "Calculate": the tools calculate live as you type.
+  - "Copy": already in the shared shell.
+  - `seo` / `content` (FAQ): SEO milestone.
+  - `nav.salaryCalculator`: navigation milestone.
+  - No amounts, rates or years in strings: they're `{placeholders}` filled
+    from the engine.
+- **Hindi:** natural Hinglish. CTC, PF, TDS and Basic + DA stay as on
+  payslips, always with Hindi text beside them.
+- **Tests:** new `src/lib/salary/i18n.test.ts` (9). It checks:
+  - key parity, nothing untranslated, Devanagari in every Hindi string,
+    placeholder parity, and only known placeholders;
+  - error-code coverage (also enforced at compile time);
+  - the dictionary getter.
+  Mutation-checked: a missing Hindi key fails 3 tests plus `tsc`; a
+  missing error code fails `tsc`.
+- Tests 212 → **221**, lint clean, `tsc` clean, build clean (20 pages).
+- Not yet built: UI, route, SEO and integration.

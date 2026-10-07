@@ -1,5 +1,5 @@
-import { en, enHome, enPercentage } from "../../translations/en/index.ts";
-import { hi, hiHome, hiPercentage } from "../../translations/hi/index.ts";
+import { en, enHome, enPercentage, enSalary } from "../../translations/en/index.ts";
+import { hi, hiHome, hiPercentage, hiSalary } from "../../translations/hi/index.ts";
 import {
   DEFAULT_LOCALE,
   LOCALES,
@@ -9,10 +9,11 @@ import {
   type HomeDictionary,
   type Locale,
   type PercentageDictionary,
+  type SalaryDictionary,
 } from "./types.ts";
 
 export { DEFAULT_LOCALE, LOCALES, LOCALE_TAGS, isLocale };
-export type { Dictionary, HomeDictionary, Locale, PercentageDictionary };
+export type { Dictionary, HomeDictionary, Locale, PercentageDictionary, SalaryDictionary };
 
 const DICTIONARIES: Record<Locale, Dictionary> = { en, hi };
 
@@ -32,6 +33,16 @@ const PERCENTAGE_DICTIONARIES: Record<Locale, PercentageDictionary> = {
 /** Same lookup as {@link getDictionary}, for the Percentage Calculator's own dictionary. */
 export function getPercentageDictionary(locale: unknown): PercentageDictionary {
   return PERCENTAGE_DICTIONARIES[isLocale(locale) ? locale : DEFAULT_LOCALE];
+}
+
+const SALARY_DICTIONARIES: Record<Locale, SalaryDictionary> = {
+  en: enSalary,
+  hi: hiSalary,
+};
+
+/** Same lookup as {@link getDictionary}, for the Salary Calculator's own dictionary. */
+export function getSalaryDictionary(locale: unknown): SalaryDictionary {
+  return SALARY_DICTIONARIES[isLocale(locale) ? locale : DEFAULT_LOCALE];
 }
 
 const HOME_DICTIONARIES: Record<Locale, HomeDictionary> = {

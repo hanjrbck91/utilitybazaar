@@ -99,4 +99,7 @@ GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
   standard deduction, surcharge, cess, EPF ceiling) live in
   `src/lib/salary/constants.ts`. Re-check them after every Budget or
   EPFO notification.
-- **Next:** M15.2. Follow "Adding a new tool" in the architecture doc.
+- **M15.2 done:** EN/HI salary dictionaries (`enSalary` / `hiSalary`,
+  `getSalaryDictionary()`). These aren't used by any page yet. The repo
+  test count is now **221**.
+- **Next:** M15.3. Follow "Adding a new tool" in the architecture doc.

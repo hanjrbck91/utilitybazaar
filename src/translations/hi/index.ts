@@ -1,7 +1,13 @@
-import type { Dictionary, HomeDictionary, PercentageDictionary } from "../../lib/i18n/types.ts";
+import type {
+  Dictionary,
+  HomeDictionary,
+  PercentageDictionary,
+  SalaryDictionary,
+} from "../../lib/i18n/types.ts";
 import { gstCalculator } from "./gst-calculator.ts";
 import { home } from "./home.ts";
 import { percentageCalculator } from "./percentage-calculator.ts";
+import { salaryCalculator } from "./salary-calculator.ts";
 import { shell } from "./shell.ts";
 
 /**
@@ -27,6 +33,13 @@ export const hiPercentage: PercentageDictionary = {
   ...shell,
   ...percentageCalculator,
   app: { ...shell.app, ...percentageCalculator.app },
+};
+
+/** The Salary Calculator's own Hindi dictionary — see `enSalary`. */
+export const hiSalary: SalaryDictionary = {
+  ...shell,
+  ...salaryCalculator,
+  app: { ...shell.app, ...salaryCalculator.app },
 };
 
 /** The homepage's own Hindi dictionary — see `enHome`. */

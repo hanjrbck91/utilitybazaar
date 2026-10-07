@@ -1,6 +1,7 @@
 import { gstCalculator } from "./gst-calculator.ts";
 import { home } from "./home.ts";
 import { percentageCalculator } from "./percentage-calculator.ts";
+import { salaryCalculator } from "./salary-calculator.ts";
 import { shell } from "./shell.ts";
 
 /**
@@ -35,6 +36,16 @@ export const enPercentage = {
   ...shell,
   ...percentageCalculator,
   app: { ...shell.app, ...percentageCalculator.app },
+};
+
+/**
+ * The Salary Calculator's own dictionary — shell plus its tool module,
+ * kept separate from every other tool's the same way `enPercentage` is.
+ */
+export const enSalary = {
+  ...shell,
+  ...salaryCalculator,
+  app: { ...shell.app, ...salaryCalculator.app },
 };
 
 /**
