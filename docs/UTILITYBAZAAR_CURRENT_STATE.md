@@ -89,6 +89,14 @@ Environment: Node 22.23.3, npm 10.9.9, **Next 16.3.8** (Turbopack),
 GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
 `3376302`.
 
-## Next milestone
-**M15 — Salary Calculator.** Follow "Adding a new tool" in the
-architecture doc.
+## In progress: M15 — Salary Calculator
+- **M15.1 done:** the pure engine in `src/lib/salary/`. It is not used by
+  any page yet, so production is unchanged. The repo test count is now
+  **212** (149 existing + 63 salary). Research, statutory sources and
+  limitations are in
+  [milestones/M15.1_SALARY_ENGINE_RESEARCH.md](milestones/M15.1_SALARY_ENGINE_RESEARCH.md).
+- **Maintenance note:** salary statutory values (tax slabs, rebate,
+  standard deduction, surcharge, cess, EPF ceiling) live in
+  `src/lib/salary/constants.ts`. Re-check them after every Budget or
+  EPFO notification.
+- **Next:** M15.2. Follow "Adding a new tool" in the architecture doc.

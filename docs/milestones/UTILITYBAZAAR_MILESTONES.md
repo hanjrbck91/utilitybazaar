@@ -19,7 +19,8 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M14.4.3 Production Verification | ✅ | deployed `7aa19ef` |
 | **UtilityBazaar Foundation** | 🔒 **FROZEN** 2026-10-06 | `7aa19ef` + docs |
 | M14.5 Next.js Security Maintenance | ✅ | `3376302` |
-| M15 Salary Calculator | 🔜 | — |
+| M15 Salary Calculator | 🔄 | — |
+| M15.1 Salary engine (research + pure engine) | ✅ | see M15.1 entry |
 
 ---
 
@@ -106,5 +107,22 @@ Rules: no feature changes to the foundation. Deferred items live in
   local commit `ce44dcf` is kept only on the local branch
   `backup/bg-next-upgrade`, which was never pushed.
 
-## M15 — Salary Calculator 🔜
-Next milestone. Not started. See "Adding a new tool" in the architecture doc.
+## M15 — Salary Calculator 🔄
+CTC → in-hand (take-home) salary. Sub-milestones are recorded below.
+
+### M15.1 — Salary engine ✅ (2026-10-07)
+- Research and locked spec:
+  [M15.1_SALARY_ENGINE_RESEARCH.md](M15.1_SALARY_ENGINE_RESEARCH.md).
+  Every statutory value is checked against official sources (Income-tax
+  Act 2025, Budget 2026, EPFO/MoLE, Labour Codes, Constitution).
+- **Key current-law findings:** the EPF wage ceiling is **₹25,000** from
+  17 Sep 2026; professional tax is **not** deductible under the new regime;
+  the Labour Codes' 50% wage floor is in force (21 Nov 2025).
+- New `src/lib/salary/` engine (pure). CTC → variable pay, employer
+  PF, gratuity → gross → employee PF, professional tax → new-regime tax
+  (slabs, ₹75k standard deduction, s.156 rebate with marginal relief,
+  surcharge with marginal relief, 4% cess) → monthly and annual take-home.
+- Tests 149 → **212** (+63), lint clean, `tsc` clean, build clean (20 pages).
+  No existing file changed.
+- Not yet built: UI, route, translations, SEO and integration (later M15
+  steps).
