@@ -4,7 +4,7 @@
 > History: [milestones/UTILITYBAZAAR_MILESTONES.md](milestones/UTILITYBAZAAR_MILESTONES.md) ·
 > Code structure: [UTILITYBAZAAR_ARCHITECTURE.md](UTILITYBAZAAR_ARCHITECTURE.md)
 
-**Updated:** 2026-10-07 · **Status:** 🔒 **FOUNDATION FROZEN** (+ M14.5 security maintenance) · M15.1–M15.5 done locally, not deployed · **Next:** M15.6 — first pipeline production deployment of M15
+**Updated:** 2026-10-07 · **Status:** 🔒 **FOUNDATION FROZEN** (+ M14.5 security maintenance) · ✅ **M15 Salary Calculator live** (M15.6, `3840520`) · **Next:** not yet defined (M15.7 not started)
 
 ## What UtilityBazaar is
 An India-focused, bilingual (English/Hindi) site of small, free calculators.
@@ -16,8 +16,8 @@ users enter are never sent to a server.
 |---|---|
 | GitHub | https://github.com/hanjrbck91/utilitybazaar, branch `main` (only branch, no tags). **Source of truth** for production. |
 | Production | https://utilitybazaar.in (Vercel project `utility-bazaar`; every push to `main` deploys to Production) |
-| Production verified at | `3376302` (2026-10-07, deployment "success"; live client reports Next 16.3.8). The latest Production deployment is `6bab0d9` (docs-only on top of `3376302`, so the same code). |
-| Last code change | `3376302` (M14.5, `next` 16.3.3 → 16.3.8) |
+| Production verified at | **`3840520`** (M15.6, 2026-10-07): CI success, Vercel automatic Production deployment "success", full smoke + SEO check on utilitybazaar.in. Later commits, if any, are documentation only. |
+| Last code change | `240b039` (M15.4, salary SEO + integration). `3840520` added CI only. |
 
 The previous working copy (office laptop) and the Drive ZIP backup were
 lost. The repo was re-cloned on 2026-10-06; GitHub and production
@@ -47,9 +47,7 @@ feature branch → push → CI (GitHub Actions) + Vercel Preview
 - Details and evidence: [UTILITYBAZAAR_ARCHITECTURE.md](UTILITYBAZAAR_ARCHITECTURE.md) → "Deployment pipeline".
 
 ## Product snapshot
-> **Repo vs production:** `main` contains M15.1–M15.4 (Salary Calculator),
-> **not yet deployed**. Production still runs `3376302`: 2 tools and 9
-> sitemap URLs. The lines below describe the repo.
+> **Repo = production** since M15.6 (`3840520`, 2026-10-07).
 
 - **Locales:** `en` (default, `x-default`), `hi`
 - **Tools:** GST Calculator, Percentage Calculator, Salary Calculator
@@ -62,14 +60,15 @@ feature branch → push → CI (GitHub Actions) + Vercel Preview
 - **Site name:** `UtilityBazaar` (titles, `og:site_name`, WebSite JSON-LD)
 - **Analytics / AdSense:** both off (env vars unset; no scripts or markup served)
 
-## Verification baseline (re-run at M14.5, 2026-10-07)
+## Verification baseline (re-run at M15.6, 2026-10-07)
 | Check | Result |
 |---|---|
 | `npm ci` | pass (lockfile consistent) |
-| `npm test` | **149/149 pass** |
+| `npm test` | **250/250 pass** |
 | `npm run lint` | pass (0 problems) |
-| `npm run build` | pass, 20 static pages, no warnings |
-| Production | all routes 200, `/` → `/en`, both calculators correct in EN/HI, copy + FAQ work, SEO/hreflang/JSON-LD/sitemap/robots unchanged, no console errors |
+| `npm run build` | pass, 24 static pages |
+| GitHub Actions | `CI` run 37579286191 on `3840520`: success |
+| Production | all routes 200, `/` → `/en`, unknown locale 404; all three calculators correct in EN/HI (salary figures equal direct engine results); sitemap 11 URLs; SEO/hreflang/JSON-LD correct on all six calculator pages; no console errors |
 
 Environment: Node 22.23.3, npm 10.9.9, **Next 16.3.8** (Turbopack),
 `eslint-config-next` 16.3.3 (left as-is on purpose).
@@ -162,6 +161,8 @@ GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
   (`.github/workflows/ci.yml`) plus the deployment contract above.
   Exercised on a temporary branch (pass, failing-test and type-error
   runs), which was then deleted. Production unchanged.
-- **Next: M15.6** — push `main` (M15.1–M15.5) through the pipeline:
-  confirm CI is green on `main`, confirm Vercel's automatic Production
-  deployment, then verify production. Ask before pushing.
+- **M15.6 done: released.** `main` was pushed `6bab0d9..3840520` (normal
+  push). CI was green, and Vercel created the Production deployment
+  automatically (vercel[bot], 06:02 UTC). No manual deployment.
+  Production verification is in the milestones entry.
+- **Next:** not defined yet. M15.7 has not been started.

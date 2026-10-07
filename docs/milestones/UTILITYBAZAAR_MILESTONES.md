@@ -19,12 +19,13 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M14.4.3 Production Verification | ✅ | deployed `7aa19ef` |
 | **UtilityBazaar Foundation** | 🔒 **FROZEN** 2026-10-06 | `7aa19ef` + docs |
 | M14.5 Next.js Security Maintenance | ✅ | `3376302` |
-| M15 Salary Calculator | 🔄 | — |
+| M15 Salary Calculator | ✅ live | `3840520` |
 | M15.1 Salary engine (research + pure engine) | ✅ | `71e6da8` |
 | M15.2 Salary translations (EN/HI) | ✅ | `9dea601` |
 | M15.3 Salary calculator UI + page | ✅ | `aad7056` |
 | M15.4 Salary SEO + content + integration | ✅ | `240b039` |
-| M15.5 CI pipeline + GitHub → Vercel contract | ✅ | see M15.5 entry |
+| M15.5 CI pipeline + GitHub → Vercel contract | ✅ | `3840520` |
+| M15.6 Controlled production release | ✅ | `3840520` (released) |
 
 ---
 
@@ -298,4 +299,55 @@ CTC → in-hand (take-home) salary. Sub-milestones are recorded below.
 - Docs: the deployment contract is in the architecture doc ("Deployment
   pipeline") and in Current State.
 - **Not done (on purpose):** no push to `main`, no deployment.
+
+### M15.6 — Controlled production release ✅ (2026-10-07)
+Release only. There were no code changes.
+- **Release commit:** `3840520` (M15.1–M15.5). The previous production
+  commit was `6bab0d9` (code = `3376302`). Pushed with a normal
+  `git push origin main` (`6bab0d9..3840520`), no force.
+- **Local gate (Node 22.23.3):**
+  - `npm ci` OK; tests 250/250; lint clean; build OK (24 pages);
+  - the tree was clean before the push.
+- **GitHub Actions:** `CI` run 37579286191 on `main` / `3840520`
+  succeeded. Test, Lint and Build all passed.
+- **Vercel:**
+  - Production deployment for `3840520` was created automatically by
+    `vercel[bot]` at 06:02:10Z; its status is "Deployment has completed".
+  - No dashboard or CLI was used. Seen through GitHub's deployments API.
+- **Production smoke test (utilitybazaar.in, real browser):**
+  - Routes return 200: `/en`, `/hi`, salary, GST and percentage pages in
+    EN/HI, `/about`, `/privacy`, `/terms`, robots, sitemap and the
+    salary OG image. `/` gives a 308 to `/en`. `/zz/salary-calculator`
+    gives a 404.
+  - **Salary**, at ₹18 lakh CTC, matches direct engine results to the
+    paisa: base ₹1,21,305.33 a month; capped PF ₹1,32,057.33; no PF
+    ₹1,37,433.33; variable 10% ₹1,07,918.17; gratuity ₹1,18,335.75;
+    PT ₹2,500 ₹1,21,097; all combined ₹1,14,278.83 (tax ₹1,35,212).
+  - The tax working opens and its total matches.
+  - Copy writes the monthly amount and shows "Copied!" (clipboard stubbed
+    in the test pane).
+  - The EN → HI switch works (`lang=hi-IN`), and the Hindi page renders
+    and calculates.
+  - At 375px, EN and HI have no horizontal overflow (measured), with every
+    section open, even at a ₹9.88 Cr CTC.
+  - **GST** EN/HI: ₹1,000 + 18% gives ₹1,180. **Percentage** EN/HI:
+    15% of 200 = 30. Both link to Salary.
+  - Both homepages list 3 tools. No console errors.
+- **SEO (production HTML):**
+  - Sitemap: 11 URLs, salary EN/HI included, no `/`. robots allows all.
+  - Salary EN/HI have:
+    - localized title and description and a self-canonical;
+    - reciprocal `en-IN` / `hi-IN` hreflang, with `x-default` → EN;
+    - no `noindex` in either the meta tag or `X-Robots-Tag`;
+    - JSON-LD `WebApplication` ("UtilityBazaar Salary Calculator" /
+      "UtilityBazaar सैलरी कैलकुलेटर"), `WebSite` and `FAQPage` (6);
+    - OG tags present.
+  - GST and Percentage EN/HI are unchanged: correct titles, canonicals,
+    hreflang, JSON-LD and FAQ (5).
+- **Known limitations:**
+  - CI does not block Vercel (no branch protection, deferred).
+  - Vercel project settings are still not read directly.
+  - The real clipboard can't be confirmed in the embedded browser.
+  - The `ubuntu-latest` runner moves to Ubuntu 26 on 2026-10-19.
+- **Verdict: RELEASE SUCCESS.**
 
