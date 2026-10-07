@@ -2,7 +2,7 @@
 
 import { OtherCalculators as OtherCalculatorsList } from "@/components/OtherCalculators";
 import { useLocale } from "@/components/LocaleProvider";
-import { percentageCalculatorPath } from "@/lib/routes";
+import { percentageCalculatorPath, salaryCalculatorPath } from "@/lib/routes";
 
 /** GST Calculator's own tool list for the shared {@link OtherCalculatorsList}. */
 export function OtherCalculators() {
@@ -11,7 +11,10 @@ export function OtherCalculators() {
   return (
     <OtherCalculatorsList
       heading={d.nav.otherCalculators}
-      tools={[{ label: d.nav.percentageCalculator, href: percentageCalculatorPath(locale) }]}
+      tools={[
+        { label: d.nav.percentageCalculator, href: percentageCalculatorPath(locale) },
+        { label: d.nav.salaryCalculator, href: salaryCalculatorPath(locale) },
+      ]}
     />
   );
 }

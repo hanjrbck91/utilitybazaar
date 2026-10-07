@@ -23,10 +23,7 @@ export function percentageCalculatorPath(locale: Locale): string {
   return `/${locale}/percentage-calculator`;
 }
 
-/**
- * The Salary Calculator, localized. Not yet in {@link indexablePaths} or
- * the sitemap — the page joins those with its SEO milestone (M15.4).
- */
+/** The Salary Calculator (CTC → in-hand), localized. */
 export function salaryCalculatorPath(locale: Locale): string {
   return `/${locale}/salary-calculator`;
 }
@@ -46,6 +43,7 @@ export function indexablePaths(): string[] {
     ...LOCALES.map(homePath),
     ...LOCALES.map(calculatorPath),
     ...LOCALES.map(percentageCalculatorPath),
+    ...LOCALES.map(salaryCalculatorPath),
     ...Object.values(STATIC_PATHS),
   ];
 }
@@ -72,6 +70,16 @@ export function percentageCalculatorLanguageAlternates(): Record<string, string>
     alternates[LOCALE_TAGS[locale]] = percentageCalculatorPath(locale);
   }
   alternates["x-default"] = percentageCalculatorPath("en");
+  return alternates;
+}
+
+/** Same hreflang map as {@link calculatorLanguageAlternates}, for the Salary Calculator. */
+export function salaryCalculatorLanguageAlternates(): Record<string, string> {
+  const alternates: Record<string, string> = {};
+  for (const locale of LOCALES) {
+    alternates[LOCALE_TAGS[locale]] = salaryCalculatorPath(locale);
+  }
+  alternates["x-default"] = salaryCalculatorPath("en");
   return alternates;
 }
 

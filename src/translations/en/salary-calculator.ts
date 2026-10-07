@@ -9,16 +9,15 @@
  * `{placeholders}` by `interpolate()`, so they stay identical across
  * locales and change in one place when the law does.
  *
- * `content` holds the minimum the page needs (section titles — whose
- * bodies reuse `explain` — and a short FAQ); the SEO milestone (M15.4)
- * finalises it and adds `seo`.
+ * `seo` feeds the page's metadata, Open Graph and WebApplication JSON-LD;
+ * `content.faq` is also the page's FAQPage JSON-LD, so the questions and
+ * answers here are exactly what is shown on the page.
  */
 export const salaryCalculator = {
   app: {
     title: "Salary Calculator",
     tagline: "See how much of your CTC reaches your bank account each month.",
     calculatorLabel: "Salary calculator",
-    purpose: "CTC to in-hand salary",
   },
 
   calculator: {
@@ -168,13 +167,31 @@ export const salaryCalculator = {
     pfWagesPercent: "Basic + DA must be more than zero, and can't be more than your fixed CTC.",
   },
 
+  seo: {
+    title: "Salary Calculator — CTC to In-Hand Salary",
+    description:
+      "Calculate your monthly in-hand salary from your annual CTC. See PF, professional tax, variable pay and income tax under the new regime in a clear take-home breakdown for India.",
+    ogAlt: "UtilityBazaar Salary Calculator — CTC to in-hand salary",
+  },
+
   content: {
     heading: "About CTC and in-hand salary",
-    ctcTitle: "CTC is not your monthly salary",
-    notMonthlyTitle: "Why CTC ÷ 12 is not your take-home",
-    pfTitle: "What PF does to your salary",
-    variableTitle: "Variable pay: yearly, not monthly",
-    estimateTitle: "Why this is an estimate",
+
+    whatTitle: "What is CTC?",
+    whatBody:
+      "CTC (cost to company) is the total amount your employer expects to spend on you in a year. It is the figure on your offer letter, but it is not the money that reaches your bank account each month: part of it may be paid only once a year, and part of it never reaches you as salary at all.",
+
+    lowerTitle: "Why is in-hand salary lower than CTC ÷ 12?",
+    lowerBody:
+      "A few things can sit between your CTC and your monthly pay. The employer's PF contribution, and a gratuity provision if your CTC includes one, are counted inside CTC but go to your PF account or are set aside for later. Variable pay or a bonus may be paid only once or twice a year. From the salary that is paid each month, your own PF, professional tax (in states that charge it) and income tax are then deducted. Not every salary has all of these, and the calculator includes only the ones that apply to your inputs.",
+
+    howTitle: "How the calculator estimates your take-home",
+    howBody:
+      "It starts with your annual CTC and takes out the parts that are not paid as monthly salary: variable pay, the employer's PF and, if you include it, gratuity. What remains is your gross salary. Your PF and professional tax are deducted, income tax is worked out under the new tax regime, and the rest is your take-home, shown for a regular month and for the whole year.",
+
+    estimateTitle: "Why the result is an estimate",
+    estimateBody:
+      "Your exact take-home depends on your salary structure, which a CTC figure alone does not show. The calculator estimates Basic + DA unless you enter it, counts the employer's PF as part of CTC, treats variable pay as a yearly amount, uses the professional tax you enter, and works out tax under the current new tax regime. Set these to match your offer letter for the closest figure; your payslip has the final numbers.",
 
     assumptionsHeading: "What this result assumes",
 
@@ -185,16 +202,28 @@ export const salaryCalculator = {
     faqHeading: "Common questions",
     faq: [
       {
-        q: "Why is my in-hand salary less than my CTC divided by 12?",
-        a: "CTC includes money that is not paid to you as monthly salary, such as the employer's PF, gratuity and variable pay. Your own PF, professional tax and income tax are then deducted from what is left.",
+        q: "What is the difference between CTC and in-hand salary?",
+        a: "CTC is the total your employer spends on you in a year, including parts that are not paid as monthly salary. In-hand salary is what reaches your bank account each month after those parts are set aside and your own PF, professional tax and income tax are deducted.",
       },
       {
-        q: "Is income tax included in this result?",
-        a: "Yes. Income tax is worked out under the new tax regime, which is the default for salaried people, and spread evenly over the year as TDS.",
+        q: "How is monthly in-hand salary calculated from CTC?",
+        a: "Take out variable pay, the employer's PF and any gratuity from your CTC to get your gross salary. Deduct your PF, professional tax and income tax, then divide what is left by 12 for a regular month.",
       },
       {
-        q: "How is PF worked out?",
-        a: "PF is a share of your Basic + DA. Your employer puts in the same amount as you, and that part is counted inside your CTC. If your offer letter doesn't show Basic + DA, the calculator estimates it.",
+        q: "Does CTC include employer PF and gratuity?",
+        a: "Often, yes. Most offer letters count the employer's PF contribution inside CTC, and some include a gratuity provision as well. Neither is paid to you as monthly salary. The calculator counts the employer's PF as part of CTC and lets you choose whether your CTC includes gratuity.",
+      },
+      {
+        q: "Is income tax included in the salary calculator?",
+        a: "Yes. Income tax is worked out under the new tax regime, the default for salaried people, including the standard deduction, rebate and cess. It is shown spread evenly over the year, as TDS usually is.",
+      },
+      {
+        q: "Why is my in-hand salary lower than my CTC divided by 12?",
+        a: "Because CTC includes money that is not paid to you as monthly salary, such as the employer's PF, gratuity and variable pay, and because your own PF, professional tax and income tax are deducted from the salary that is paid.",
+      },
+      {
+        q: "Is the salary calculator accurate?",
+        a: "It follows current PF and income tax rules and shows every step, but it is an estimate: your real take-home depends on your exact salary structure. Enter your Basic + DA, variable pay and professional tax from your offer letter for the closest result.",
       },
     ],
   },

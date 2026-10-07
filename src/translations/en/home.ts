@@ -13,7 +13,7 @@ export const home = {
   seo: {
     title: "UtilityBazaar — Simple Online Calculators",
     description:
-      "Free calculators for everyday tasks, including GST and percentage calculations — fast, private, and available in English and Hindi.",
+      "Free calculators for everyday tasks — GST, percentages and CTC to in-hand salary. Fast, private, and available in English and Hindi.",
     ogAlt: "UtilityBazaar",
   },
 
@@ -23,5 +23,7 @@ export const home = {
       "Calculate GST-inclusive and GST-exclusive amounts, with the CGST, SGST or IGST split.",
     percentageDescription:
       "Calculate percentages, find what percentage one number is of another, and work out percentage change.",
+    salaryDescription:
+      "Turn your annual CTC into monthly in-hand salary, with PF, professional tax and income tax worked out.",
   },
 };

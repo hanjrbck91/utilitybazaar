@@ -4,6 +4,7 @@ import {
   getDictionary,
   getHomeDictionary,
   getPercentageDictionary,
+  getSalaryDictionary,
   type Locale,
 } from "../i18n/index.ts";
 import {
@@ -13,6 +14,8 @@ import {
   homePath,
   percentageCalculatorLanguageAlternates,
   percentageCalculatorPath,
+  salaryCalculatorLanguageAlternates,
+  salaryCalculatorPath,
 } from "../routes.ts";
 
 /**
@@ -94,6 +97,42 @@ export function buildPercentageCalculatorSeo(locale: Locale): PageSeo {
 
   const languages: Record<string, string> = {};
   for (const [code, path] of Object.entries(percentageCalculatorLanguageAlternates())) {
+    languages[code] = absoluteUrl(path);
+  }
+
+  const alternateLocales = Object.values(LOCALE_TAGS)
+    .filter((tag) => tag !== LOCALE_TAGS[locale])
+    .map(toOpenGraphLocale);
+
+  return {
+    title: d.seo.title,
+    description: d.seo.description,
+    canonical,
+    languages,
+    openGraph: {
+      title: d.seo.title,
+      description: d.seo.description,
+      url: canonical,
+      siteName: SITE_NAME,
+      locale: toOpenGraphLocale(LOCALE_TAGS[locale]),
+      alternateLocales,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: d.seo.title,
+      description: d.seo.description,
+    },
+  };
+}
+
+/** SEO for the Salary Calculator at a given locale. Same shape as {@link buildCalculatorSeo}. */
+export function buildSalaryCalculatorSeo(locale: Locale): PageSeo {
+  const d = getSalaryDictionary(locale);
+  const canonical = absoluteUrl(salaryCalculatorPath(locale));
+
+  const languages: Record<string, string> = {};
+  for (const [code, path] of Object.entries(salaryCalculatorLanguageAlternates())) {
     languages[code] = absoluteUrl(path);
   }
 

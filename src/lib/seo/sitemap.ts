@@ -1,6 +1,12 @@
 import { absoluteUrl, isSiteUrlConfigured } from "../config.ts";
 import { LOCALE_TAGS, LOCALES } from "../i18n/index.ts";
-import { STATIC_PATHS, calculatorPath, homePath, percentageCalculatorPath } from "../routes.ts";
+import {
+  STATIC_PATHS,
+  calculatorPath,
+  homePath,
+  percentageCalculatorPath,
+  salaryCalculatorPath,
+} from "../routes.ts";
 
 export interface SitemapEntry {
   url: string;
@@ -23,15 +29,17 @@ export interface SitemapEntry {
  * `calculator` covers `/en/gst-calculator` and `/hi/gst-calculator`,
  * whose text lives in the shared translation dictionaries.
  * `percentageCalculator` covers `/en/percentage-calculator` and
- * `/hi/percentage-calculator`. `supporting` covers `/about`, `/privacy`
- * and `/terms`. Values reflect the last commit that touched the relevant
- * sources; bump them only on a real content change.
+ * `/hi/percentage-calculator`. `salaryCalculator` covers
+ * `/en/salary-calculator` and `/hi/salary-calculator`. `supporting` covers
+ * `/about`, `/privacy` and `/terms`. Values reflect the last commit that
+ * touched the relevant sources; bump them only on a real content change.
  */
 const LAST_MODIFIED = {
-  home: "2026-09-18",
-  calculator: "2026-08-28",
-  percentageCalculator: "2026-09-12",
-  supporting: "2026-09-18",
+  home: "2026-10-07",
+  calculator: "2026-10-07",
+  percentageCalculator: "2026-10-07",
+  salaryCalculator: "2026-10-07",
+  supporting: "2026-10-07",
 } as const;
 
 export interface RobotsRules {
@@ -51,10 +59,12 @@ export function buildSitemap(): SitemapEntry[] {
   const homeLanguages: Record<string, string> = {};
   const gstLanguages: Record<string, string> = {};
   const percentageLanguages: Record<string, string> = {};
+  const salaryLanguages: Record<string, string> = {};
   for (const locale of LOCALES) {
     homeLanguages[LOCALE_TAGS[locale]] = absoluteUrl(homePath(locale));
     gstLanguages[LOCALE_TAGS[locale]] = absoluteUrl(calculatorPath(locale));
     percentageLanguages[LOCALE_TAGS[locale]] = absoluteUrl(percentageCalculatorPath(locale));
+    salaryLanguages[LOCALE_TAGS[locale]] = absoluteUrl(salaryCalculatorPath(locale));
   }
 
   const home: SitemapEntry[] = LOCALES.map((locale) => ({
@@ -81,6 +91,14 @@ export function buildSitemap(): SitemapEntry[] {
     alternates: { languages: percentageLanguages },
   }));
 
+  const salaryCalculators: SitemapEntry[] = LOCALES.map((locale) => ({
+    url: absoluteUrl(salaryCalculatorPath(locale)),
+    lastModified: LAST_MODIFIED.salaryCalculator,
+    changeFrequency: "monthly",
+    priority: 1,
+    alternates: { languages: salaryLanguages },
+  }));
+
   const supporting: SitemapEntry[] = Object.values(STATIC_PATHS).map((path) => ({
     url: absoluteUrl(path),
     lastModified: LAST_MODIFIED.supporting,
@@ -88,7 +106,7 @@ export function buildSitemap(): SitemapEntry[] {
     priority: 0.3,
   }));
 
-  return [...home, ...calculators, ...percentageCalculators, ...supporting];
+  return [...home, ...calculators, ...percentageCalculators, ...salaryCalculators, ...supporting];
 }
 
 /**

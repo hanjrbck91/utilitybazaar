@@ -10,14 +10,14 @@ import { OtherCalculators } from "@/components/salary-calculator/OtherCalculator
 import { SupportingContent } from "@/components/salary-calculator/SupportingContent";
 import { getSalaryDictionary, isLocale, LOCALES, type Locale } from "@/lib/i18n";
 import { salaryCalculatorPath } from "@/lib/routes";
-import { metadataBase } from "@/lib/seo/metadata";
+import {
+  buildSalaryCalculatorJsonLd,
+  buildSalaryFaqJsonLd,
+  buildWebSiteJsonLd,
+  serializeJsonLd,
+} from "@/lib/seo/jsonld";
+import { buildSalaryCalculatorSeo, metadataBase } from "@/lib/seo/metadata";
 
-/**
- * Provisional metadata. The page's SEO (title/description spec,
- * canonical, hreflang, Open Graph, JSON-LD, sitemap) belongs to M15.4;
- * until then the page asks not to be indexed, so an early deploy cannot
- * put a half-finished page into search results.
- */
 export async function generateMetadata({
   params,
 }: {
@@ -26,13 +26,30 @@ export async function generateMetadata({
   const { locale } = await params;
   if (!isLocale(locale)) return {};
 
-  const d = getSalaryDictionary(locale);
+  const seo = buildSalaryCalculatorSeo(locale);
 
   return {
     metadataBase: metadataBase(),
-    title: `${d.app.title} — ${d.app.purpose}`,
-    description: d.app.tagline,
-    robots: { index: false, follow: true },
+    title: seo.title,
+    description: seo.description,
+    alternates: {
+      canonical: seo.canonical,
+      languages: seo.languages,
+    },
+    openGraph: {
+      title: seo.openGraph.title,
+      description: seo.openGraph.description,
+      url: seo.openGraph.url,
+      siteName: seo.openGraph.siteName,
+      locale: seo.openGraph.locale,
+      alternateLocale: seo.openGraph.alternateLocales,
+      type: seo.openGraph.type,
+    },
+    twitter: {
+      card: seo.twitter.card,
+      title: seo.twitter.title,
+      description: seo.twitter.description,
+    },
   };
 }
 
@@ -50,6 +67,26 @@ export default async function SalaryCalculatorPage({
 
   return (
     <main className="mx-auto flex w-full max-w-[464px] flex-1 flex-col px-5 pb-20 pt-10 sm:max-w-xl sm:pt-16 lg:max-w-2xl lg:pt-24">
+      <script
+        type="application/ld+json"
+        // Built from static, non-user data — see lib/seo/jsonld.ts.
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildSalaryCalculatorJsonLd(locale)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildWebSiteJsonLd()),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        // FAQ questions/answers are the same strings rendered by <Faq />.
+        dangerouslySetInnerHTML={{
+          __html: serializeJsonLd(buildSalaryFaqJsonLd(locale)),
+        }}
+      />
       <LocaleProvider initialLocale={locale} dictionary={getSalaryDictionary(locale)}>
         <PageHeader languageHrefs={languageHrefs} />
         <Calculator />

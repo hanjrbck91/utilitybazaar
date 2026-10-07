@@ -24,12 +24,18 @@ lost. The repo was re-cloned on 2026-10-06; GitHub and production
 matched, and nothing newer was found.
 
 ## Product snapshot
+> **Repo vs production:** `main` contains M15.1–M15.4 (Salary Calculator),
+> **not yet deployed**. Production still runs `3376302`: 2 tools and 9
+> sitemap URLs. The lines below describe the repo.
+
 - **Locales:** `en` (default, `x-default`), `hi`
-- **Tools:** GST Calculator, Percentage Calculator (both EN + HI)
+- **Tools:** GST Calculator, Percentage Calculator, Salary Calculator
+  (CTC → in-hand), all EN + HI
 - **Pages:** `/en`, `/hi` (tools hub) · `/{en,hi}/gst-calculator` ·
-  `/{en,hi}/percentage-calculator` · `/about`, `/privacy`, `/terms` (English only)
+  `/{en,hi}/percentage-calculator` · `/{en,hi}/salary-calculator` ·
+  `/about`, `/privacy`, `/terms` (English only)
 - **`/`:** 308 redirect to `/en`
-- **Sitemap:** 9 URLs (everything above except `/`) · **robots:** allow all + sitemap
+- **Sitemap:** **11** URLs (everything above except `/`) · **robots:** allow all + sitemap
 - **Site name:** `UtilityBazaar` (titles, `og:site_name`, WebSite JSON-LD)
 - **Analytics / AdSense:** both off (env vars unset; no scripts or markup served)
 
@@ -77,9 +83,9 @@ Environment: Node 22.23.3, npm 10.9.9, **Next 16.3.8** (Turbopack),
    `eslint-config-next` 16.3.8). For the `braces` issue reached through
    `fast-glob`, no patched release exists.
 2. `npm ci` warns that `eslint@9.39.5` is deprecated. This predates M14.5.
-3. **Sitemap `LAST_MODIFIED.calculator`** is `2026-08-28`, but the GST
-   sources last changed on 2026-09-12. This predates M14.2 and was left
-   out of M14.4.1 on purpose.
+3. ~~Sitemap `LAST_MODIFIED.calculator` stale~~. Resolved in M15.4:
+   every route's date is now 2026-10-07, because each page's content
+   changed (new salary links or copy).
 4. Add `.nvmrc` / `engines` pinning Node 22.
 5. `README.md` is still the create-next-app boilerplate.
 6. A shared tool registry, to replace the per-tool copies of route, SEO and
@@ -107,7 +113,19 @@ GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
   metadata with `noindex`**, is not in the sitemap, and isn't linked from
   the homepage or the other tools yet. The local build has 22 static pages
   (production still has 20). The repo test count is now **243**.
-- **Next:** M15.4, the salary page's SEO (title/description, canonical,
-  hreflang, OG, JSON-LD, sitemap, final content and FAQ, remove
-  `noindex`). Then integration (homepage, cross-links, About) and
-  deployment.
+- **M15.4 done (local only, not deployed):** the salary pages are
+  **indexable**. They have:
+  - final EN/HI titles and descriptions;
+  - self-referencing canonicals with reciprocal `en-IN` / `hi-IN` /
+    `x-default` hreflang;
+  - Open Graph and Twitter tags, and an OG image;
+  - `WebApplication` JSON-LD ("UtilityBazaar Salary Calculator") plus
+    `WebSite` and `FAQPage` (6 FAQs);
+  - final supporting content.
+
+  They are also in the sitemap (11 URLs) and linked from the homepage,
+  from GST and Percentage "Other calculators", and from the About copy.
+  The local build has 24 static pages. The repo test count is now
+  **250**.
+- **Next:** deploy M15 (push `main` → Vercel) and verify production.
+  Ask before pushing.

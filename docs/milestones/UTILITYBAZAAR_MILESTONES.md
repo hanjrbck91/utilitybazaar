@@ -22,7 +22,8 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M15 Salary Calculator | 🔄 | — |
 | M15.1 Salary engine (research + pure engine) | ✅ | `71e6da8` |
 | M15.2 Salary translations (EN/HI) | ✅ | `9dea601` |
-| M15.3 Salary calculator UI + page | ✅ | see M15.3 entry |
+| M15.3 Salary calculator UI + page | ✅ | `aad7056` |
+| M15.4 Salary SEO + content + integration | ✅ | see M15.4 entry |
 
 ---
 
@@ -220,3 +221,50 @@ CTC → in-hand (take-home) salary. Sub-milestones are recorded below.
   salary).
 - Not yet built: final SEO/content and FAQ (M15.4), homepage and
   cross-link integration, deployment.
+
+### M15.4 — Salary SEO, content and integration ✅ (2026-10-07)
+- **Indexable:** `noindex` removed. Final metadata via
+  `buildSalaryCalculatorSeo`:
+  - EN title "Salary Calculator — CTC to In-Hand Salary"; HI "सैलरी
+    कैलकुलेटर — CTC से इन-हैंड सैलरी निकालें";
+  - descriptions cover CTC → monthly in-hand, PF, professional tax,
+    variable pay, new-regime income tax and India;
+  - self-referencing canonicals; reciprocal hreflang
+    (`salaryCalculatorLanguageAlternates`, with `x-default` → EN);
+  - Open Graph and Twitter tags.
+- **JSON-LD:** `WebApplication` named "UtilityBazaar Salary Calculator"
+  (HI: "UtilityBazaar सैलरी कैलकुलेटर"), plus `WebSite` and `FAQPage`
+  built from the visible FAQ. No ratings, prices or authors.
+- **OG image:** `salary-calculator/opengraph-image.tsx` reads
+  "UtilityBazaar / Salary Calculator / CTC → In-Hand Salary" with chips.
+  It's Latin-only and shared by both locales, like the other tools.
+- **Content:**
+  - four final sections: what CTC is, why in-hand pay is lower than
+    CTC ÷ 12, how the estimate is built, and why it's an estimate;
+  - six FAQs, as specified.
+  - Only components the engine actually models are described.
+- **Integration:**
+  - `nav.salaryCalculator` added to the shell;
+  - homepage `ToolsList` has a third card (`tools.salaryDescription`), and
+    the homepage description mentions salary;
+  - GST and Percentage "Other calculators" link to Salary;
+  - the About copy lists all three tools.
+- **Sitemap: 11 URLs.** Salary entries carry hreflang alternates. Every
+  `LAST_MODIFIED` is now 2026-10-07, because each page's content changed.
+  This also clears the old stale-GST-date item. `robots.txt` is
+  unchanged.
+- **Tests:** 243 → **250** (+7 salary SEO tests). The indexable-path and
+  sitemap tests were updated to include salary.
+- **Local production build (24 static pages) audited as a crawler sees
+  it,** for both EN and HI:
+  - title, description, H1, `lang`, canonical, hreflang, OG and Twitter
+    tags correct;
+  - no `noindex`;
+  - 3 valid JSON-LD blocks;
+  - no raw keys or placeholders in the visible text.
+- **Browser-verified** on desktop and 375px mobile, EN and HI:
+  - live result, no overflow, result on the first screen;
+  - FAQ, copy and the language switch work;
+  - homepage card and GST cross-link navigate correctly;
+  - GST and Percentage results unchanged; no console errors.
+- Not done: deployment (not pushed).

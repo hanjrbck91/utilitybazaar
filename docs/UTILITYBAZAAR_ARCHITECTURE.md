@@ -40,7 +40,7 @@ src/
 │   │   ├── page.tsx              # tools hub (homepage)
 │   │   ├── gst-calculator/       # page.tsx + opengraph-image.tsx
 │   │   ├── percentage-calculator/
-│   │   └── salary-calculator/    # page.tsx only (provisional metadata, noindex) — M15.3
+│   │   └── salary-calculator/    # page.tsx + opengraph-image.tsx
 │   ├── (site)/                   # English-only static pages
 │   │   ├── layout.tsx
 │   │   └── about/ privacy/ terms/
@@ -112,11 +112,13 @@ defaults come from engine constants (`DEFAULT_PF_WAGES_PERCENT`,
 - `SITE_NAME = "UtilityBazaar"` (`lib/seo/metadata.ts`).
 - `PageSeo` builders return metadata as plain data, so tests can check
   it without rendering: `buildHomeSeo`, `buildCalculatorSeo`,
-  `buildPercentageCalculatorSeo`, `buildStaticPageSeo` (title format
-  `"<Title> — UtilityBazaar"`).
+  `buildPercentageCalculatorSeo`, `buildSalaryCalculatorSeo`,
+  `buildStaticPageSeo` (title format `"<Title> — UtilityBazaar"`).
 - JSON-LD includes `WebSite` (site name) and `WebApplication` plus
   `FAQPage` on each calculator. It is kept minimal and true: no
-  ratings, prices or Organization claims.
+  ratings, prices or Organization claims. GST and Percentage name their
+  `WebApplication` by the page title. Salary uses
+  `"UtilityBazaar " + app.title` ("UtilityBazaar Salary Calculator").
 - `LAST_MODIFIED` in `lib/seo/sitemap.ts` is set by hand from git
   history. Update it only when a route's content actually changes.
 - If `NEXT_PUBLIC_SITE_URL` is not set, `robots.txt` disallows the

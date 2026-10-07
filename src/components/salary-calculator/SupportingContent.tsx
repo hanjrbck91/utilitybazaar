@@ -8,21 +8,19 @@ import { STATIC_PATHS } from "@/lib/routes";
 
 /**
  * A short explanation below the tool, in the same collapsed
- * `<details>` shape as the other calculators' `SupportingContent`.
- * Each section body is the matching `explain` string the calculator
- * already shows, so the page states each fact once in one wording.
+ * `<details>` shape as the other calculators' `SupportingContent`:
+ * what CTC is, why in-hand pay is lower than CTC ÷ 12, how the estimate
+ * is built, and what it assumes. Stays in the HTML when collapsed.
  */
 export function SupportingContent() {
   const { d } = useLocale<SalaryDictionary>();
   const c = d.content;
-  const e = d.explain;
 
   const sections = [
-    { title: c.ctcTitle, body: e.ctcNotTakeHome },
-    { title: c.notMonthlyTitle, body: e.notMonthlyCash },
-    { title: c.pfTitle, body: e.employerPfInCtc },
-    { title: c.variableTitle, body: e.variableNotMonthly },
-    { title: c.estimateTitle, body: e.estimate },
+    { title: c.whatTitle, body: c.whatBody },
+    { title: c.lowerTitle, body: c.lowerBody },
+    { title: c.howTitle, body: c.howBody },
+    { title: c.estimateTitle, body: c.estimateBody },
   ];
 
   return (

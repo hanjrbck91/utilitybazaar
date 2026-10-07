@@ -3,7 +3,7 @@
 import { OtherCalculators as OtherCalculatorsList } from "@/components/OtherCalculators";
 import { useLocale } from "@/components/LocaleProvider";
 import { type PercentageDictionary } from "@/lib/i18n";
-import { calculatorPath } from "@/lib/routes";
+import { calculatorPath, salaryCalculatorPath } from "@/lib/routes";
 
 /** Percentage Calculator's own tool list for the shared {@link OtherCalculatorsList}. */
 export function OtherCalculators() {
@@ -12,7 +12,10 @@ export function OtherCalculators() {
   return (
     <OtherCalculatorsList
       heading={d.nav.otherCalculators}
-      tools={[{ label: d.nav.gstCalculator, href: calculatorPath(locale) }]}
+      tools={[
+        { label: d.nav.gstCalculator, href: calculatorPath(locale) },
+        { label: d.nav.salaryCalculator, href: salaryCalculatorPath(locale) },
+      ]}
     />
   );
 }

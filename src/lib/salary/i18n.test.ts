@@ -63,7 +63,7 @@ const ALLOWED_PLACEHOLDERS = new Set([
 
 test("Salary Calculator: English and Hindi dictionaries exist with the expected sections", () => {
   for (const [name, d] of [["en", enSalary], ["hi", hiSalary]] as const) {
-    for (const section of ["app", "calculator", "actions", "result", "breakdown", "tax", "explain", "errors", "fieldErrors"]) {
+    for (const section of ["app", "calculator", "actions", "result", "breakdown", "tax", "explain", "errors", "fieldErrors", "seo", "content"]) {
       assert.equal(typeof d[section as keyof SalaryDictionary], "object", `${name}.${section} missing`);
     }
     // Shell keys the shared components (header, language switch, copy button, footer) rely on.

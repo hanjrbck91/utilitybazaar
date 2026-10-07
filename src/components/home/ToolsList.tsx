@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLocale } from "@/components/LocaleProvider";
 import { type HomeDictionary } from "@/lib/i18n";
-import { calculatorPath, percentageCalculatorPath } from "@/lib/routes";
+import { calculatorPath, percentageCalculatorPath, salaryCalculatorPath } from "@/lib/routes";
 
 /**
  * The homepage's tool catalogue — a title, a one-line description and a
@@ -27,6 +27,11 @@ export function ToolsList() {
       title: d.nav.percentageCalculator,
       description: d.tools.percentageDescription,
       href: percentageCalculatorPath(locale),
+    },
+    {
+      title: d.nav.salaryCalculator,
+      description: d.tools.salaryDescription,
+      href: salaryCalculatorPath(locale),
     },
   ];
 

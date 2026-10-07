@@ -2,7 +2,13 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { SITE_URL } from "../config.ts";
-import { LOCALES, getDictionary, getHomeDictionary, getPercentageDictionary } from "../i18n/index.ts";
+import {
+  LOCALES,
+  getDictionary,
+  getHomeDictionary,
+  getPercentageDictionary,
+  getSalaryDictionary,
+} from "../i18n/index.ts";
 import {
   STATIC_PATHS,
   calculatorLanguageAlternates,
@@ -12,12 +18,16 @@ import {
   indexablePaths,
   percentageCalculatorLanguageAlternates,
   percentageCalculatorPath,
+  salaryCalculatorLanguageAlternates,
+  salaryCalculatorPath,
 } from "../routes.ts";
 import {
   buildCalculatorJsonLd,
   buildFaqJsonLd,
   buildPercentageCalculatorJsonLd,
   buildPercentageFaqJsonLd,
+  buildSalaryCalculatorJsonLd,
+  buildSalaryFaqJsonLd,
   buildWebSiteJsonLd,
   serializeJsonLd,
 } from "./jsonld.ts";
@@ -25,6 +35,7 @@ import {
   buildCalculatorSeo,
   buildHomeSeo,
   buildPercentageCalculatorSeo,
+  buildSalaryCalculatorSeo,
   buildStaticPageSeo,
   toOpenGraphLocale,
 } from "./metadata.ts";
@@ -46,6 +57,8 @@ test("indexable paths are unique and rooted", () => {
     "/hi/gst-calculator",
     "/en/percentage-calculator",
     "/hi/percentage-calculator",
+    "/en/salary-calculator",
+    "/hi/salary-calculator",
     "/about",
     "/privacy",
     "/terms",
@@ -211,6 +224,89 @@ test("Percentage Calculator: FAQ JSON-LD mirrors the visible FAQ exactly, in bot
 
     assert.doesNotMatch(serializeJsonLd(data), /</, "unescaped < breaks the script tag");
   }
+});
+
+// --- Salary Calculator ---------------------------------------------------
+
+test("Salary Calculator: localized routes and hreflang map", () => {
+  assert.equal(salaryCalculatorPath("en"), "/en/salary-calculator");
+  assert.equal(salaryCalculatorPath("hi"), "/hi/salary-calculator");
+  assert.deepEqual(salaryCalculatorLanguageAlternates(), {
+    "en-IN": "/en/salary-calculator",
+    "hi-IN": "/hi/salary-calculator",
+    "x-default": "/en/salary-calculator",
+  });
+});
+
+test("Salary Calculator: English metadata targets the primary intent", () => {
+  const seo = buildSalaryCalculatorSeo("en");
+  assert.equal(seo.title, "Salary Calculator — CTC to In-Hand Salary");
+  for (const term of ["in-hand salary", "CTC", "PF", "professional tax", "income tax", "variable pay", "India"]) {
+    assert.match(seo.description, new RegExp(term, "i"), `description missing ${term}`);
+  }
+});
+
+test("Salary Calculator: Hindi metadata is genuinely Hindi", () => {
+  const seo = buildSalaryCalculatorSeo("hi");
+  assert.match(seo.title, /सैलरी कैलकुलेटर/);
+  assert.notEqual(seo.title, buildSalaryCalculatorSeo("en").title);
+  assert.match(seo.description, /[ऀ-ॿ]/, "description has no Devanagari");
+});
+
+test("Salary Calculator: sensible lengths, self-referencing absolute canonicals", () => {
+  for (const locale of LOCALES) {
+    const seo = buildSalaryCalculatorSeo(locale);
+    assert.ok(seo.title.length <= 65, `${locale} title too long: ${seo.title.length}`);
+    assert.ok(seo.description.length >= 80 && seo.description.length <= 220, `${locale} description length ${seo.description.length}`);
+    assert.equal(seo.canonical, `${SITE_URL}${salaryCalculatorPath(locale)}`);
+    assert.equal(seo.canonical, seo.openGraph.url);
+    assert.equal(seo.openGraph.siteName, "UtilityBazaar");
+    assert.equal(seo.twitter.title, seo.title);
+  }
+});
+
+test("Salary Calculator: hreflang is reciprocal between locales", () => {
+  const en = buildSalaryCalculatorSeo("en");
+  const hi = buildSalaryCalculatorSeo("hi");
+  assert.deepEqual(en.languages, hi.languages);
+  assert.equal(en.languages["en-IN"], en.canonical);
+  assert.equal(hi.languages["hi-IN"], hi.canonical);
+  assert.equal(en.languages["x-default"], `${SITE_URL}/en/salary-calculator`);
+});
+
+test("Salary Calculator: JSON-LD names the tool as UtilityBazaar's and describes it honestly", () => {
+  assert.equal(buildSalaryCalculatorJsonLd("en").name, "UtilityBazaar Salary Calculator");
+  for (const locale of LOCALES) {
+    const data = buildSalaryCalculatorJsonLd(locale);
+    assert.equal(data["@type"], "WebApplication");
+    assert.match(data.name, /^UtilityBazaar /);
+    assert.doesNotMatch(data.name, /GST/);
+    assert.equal(data.url, `${SITE_URL}${salaryCalculatorPath(locale)}`);
+    assert.equal(data.inLanguage, locale === "en" ? "en-IN" : "hi-IN");
+    assert.equal(data.description, getSalaryDictionary(locale).seo.description);
+    const json = JSON.parse(serializeJsonLd(data)) as Record<string, unknown>;
+    for (const key of ["aggregateRating", "review", "offers", "author", "publisher"]) {
+      assert.equal(key in json, false, `${key} must not be claimed`);
+    }
+  }
+});
+
+test("Salary Calculator: FAQ JSON-LD mirrors the visible FAQ exactly, in both locales", () => {
+  for (const locale of LOCALES) {
+    const data = buildSalaryFaqJsonLd(locale);
+    const faq = getSalaryDictionary(locale).content.faq;
+
+    assert.equal(data["@type"], "FAQPage");
+    assert.ok(faq.length >= 4 && faq.length <= 6, "keep the FAQ short");
+    assert.equal(data.mainEntity.length, faq.length);
+    data.mainEntity.forEach((entry, i) => {
+      assert.equal(entry.name, faq[i].q);
+      assert.equal(entry.acceptedAnswer.text, faq[i].a);
+    });
+    assert.doesNotThrow(() => JSON.parse(serializeJsonLd(data)));
+    assert.doesNotMatch(serializeJsonLd(data), /</, "unescaped < breaks the script tag");
+  }
+  assert.equal(getSalaryDictionary("en").content.faq.length, getSalaryDictionary("hi").content.faq.length);
 });
 
 test("supporting pages carry a canonical but claim no translations", () => {
@@ -404,23 +500,17 @@ test("sitemap carries hreflang alternates on the homepage and calculator pages o
   const percentageCalculators = entries.filter((entry) =>
     entry.url.includes("/percentage-calculator"),
   );
-  const home = entries.filter(
-    (entry) =>
-      !entry.url.includes("/gst-calculator") &&
-      !entry.url.includes("/percentage-calculator") &&
-      /\/(en|hi)$/.test(entry.url),
-  );
-  const supporting = entries.filter(
-    (entry) =>
-      !entry.url.includes("/gst-calculator") &&
-      !entry.url.includes("/percentage-calculator") &&
-      !/\/(en|hi)$/.test(entry.url),
-  );
+  const salaryCalculators = entries.filter((entry) => entry.url.includes("/salary-calculator"));
+  const isTool = (url: string) => /\/(gst|percentage|salary)-calculator$/.test(url);
+  const home = entries.filter((entry) => !isTool(entry.url) && /\/(en|hi)$/.test(entry.url));
+  const supporting = entries.filter((entry) => !isTool(entry.url) && !/\/(en|hi)$/.test(entry.url));
 
   assert.equal(home.length, 2);
   assert.equal(gstCalculators.length, 2);
   assert.equal(percentageCalculators.length, 2);
-  for (const entry of [...home, ...gstCalculators, ...percentageCalculators]) {
+  assert.equal(salaryCalculators.length, 2);
+  assert.equal(supporting.length, 3);
+  for (const entry of [...home, ...gstCalculators, ...percentageCalculators, ...salaryCalculators]) {
     assert.deepEqual(Object.keys(entry.alternates?.languages ?? {}), ["en-IN", "hi-IN"]);
     assert.equal(entry.priority, 1);
   }
@@ -435,6 +525,11 @@ test("sitemap carries hreflang alternates on the homepage and calculator pages o
   for (const entry of percentageCalculators) {
     for (const url of Object.values(entry.alternates?.languages ?? {})) {
       assert.match(url, /\/percentage-calculator$/);
+    }
+  }
+  for (const entry of salaryCalculators) {
+    for (const url of Object.values(entry.alternates?.languages ?? {})) {
+      assert.match(url, /\/salary-calculator$/);
     }
   }
   for (const entry of home) {
