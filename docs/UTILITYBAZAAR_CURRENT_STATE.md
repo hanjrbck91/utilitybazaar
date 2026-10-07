@@ -4,7 +4,7 @@
 > History: [milestones/UTILITYBAZAAR_MILESTONES.md](milestones/UTILITYBAZAAR_MILESTONES.md) ·
 > Code structure: [UTILITYBAZAAR_ARCHITECTURE.md](UTILITYBAZAAR_ARCHITECTURE.md)
 
-**Updated:** 2026-10-07 · **Status:** 🔒 **FOUNDATION FROZEN** (+ M14.5 security maintenance) · **Next:** M15 — Salary Calculator
+**Updated:** 2026-10-07 · **Status:** 🔒 **FOUNDATION FROZEN** (+ M14.5 security maintenance) · M15.1–M15.5 done locally, not deployed · **Next:** M15.6 — first pipeline production deployment of M15
 
 ## What UtilityBazaar is
 An India-focused, bilingual (English/Hindi) site of small, free calculators.
@@ -14,14 +14,37 @@ users enter are never sent to a server.
 ## Source of truth
 | | |
 |---|---|
-| GitHub | https://github.com/hanjrbck91/utilitybazaar, branch `main` (only branch, no tags) |
+| GitHub | https://github.com/hanjrbck91/utilitybazaar, branch `main` (only branch, no tags). **Source of truth** for production. |
 | Production | https://utilitybazaar.in (Vercel project `utility-bazaar`; every push to `main` deploys to Production) |
-| Production verified at | `3376302` (2026-10-07, deployment "success"; live client reports Next 16.3.8). Later commits are documentation only. |
+| Production verified at | `3376302` (2026-10-07, deployment "success"; live client reports Next 16.3.8). The latest Production deployment is `6bab0d9` (docs-only on top of `3376302`, so the same code). |
 | Last code change | `3376302` (M14.5, `next` 16.3.3 → 16.3.8) |
 
 The previous working copy (office laptop) and the Drive ZIP backup were
 lost. The repo was re-cloned on 2026-10-06; GitHub and production
 matched, and nothing newer was found.
+
+## Deployment pipeline (M15.5, verified 2026-10-07)
+```
+feature branch → push → CI (GitHub Actions) + Vercel Preview
+   → (optional PR) → merge / push main → CI + Vercel Production
+```
+- **Local, before every commit:** `npm test`, `npm run lint`,
+  `npm run build` (Node 22). `npx tsc --noEmit` is optional locally;
+  `next build` already runs the full type check.
+- **GitHub `main` = production source.** Vercel's GitHub integration
+  deploys every push to `main` to Production and every other branch to a
+  Preview (`*.vercel.app`, `X-Robots-Tag: noindex`).
+- **CI = verification only:** `.github/workflows/ci.yml` runs on every
+  branch push (and on fork PRs): `npm ci` → `npm test` → `npm run lint`
+  → `npm run build`. No secrets, never deploys.
+- **Rule: no manual Vercel deployments** (no dashboard "Deploy"/"Redeploy",
+  no `vercel` CLI deploys). Production changes only by pushing `main`.
+- **Not a gate yet:** CI does **not** block Vercel. A push to `main`
+  deploys even if CI fails (no branch protection; Vercel does not wait
+  for Actions). Vercel's own build does fail on type/build errors, so a
+  broken build never goes live, but failing tests or lint would. Run the
+  local checks (or wait for green CI on a branch) before pushing `main`.
+- Details and evidence: [UTILITYBAZAAR_ARCHITECTURE.md](UTILITYBAZAAR_ARCHITECTURE.md) → "Deployment pipeline".
 
 ## Product snapshot
 > **Repo vs production:** `main` contains M15.1–M15.4 (Salary Calculator),
@@ -86,10 +109,18 @@ Environment: Node 22.23.3, npm 10.9.9, **Next 16.3.8** (Turbopack),
 3. ~~Sitemap `LAST_MODIFIED.calculator` stale~~. Resolved in M15.4:
    every route's date is now 2026-10-07, because each page's content
    changed (new salary links or copy).
-4. Add `.nvmrc` / `engines` pinning Node 22.
+4. Add `.nvmrc` / `engines` pinning Node 22. (CI pins `22.x` in the
+   workflow. `engines` would also change Vercel's build Node version, so
+   decide it deliberately.)
 5. `README.md` is still the create-next-app boilerplate.
 6. A shared tool registry, to replace the per-tool copies of route, SEO and
    cross-link code. Decide this when adding the third tool.
+7. Optional: make CI a real gate (branch protection on `main` requiring
+   the `verify` check, plus PR-only merges). Today it only reports.
+8. Vercel project settings were not read directly (see the architecture
+   doc). Confirm them in the dashboard: build/install command overrides,
+   Node.js version, environment variables, and Preview deployment
+   protection.
 
 **Completed from this list:** `next` 16.3.3 → 16.3.8 fixing critical
 GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
@@ -127,5 +158,10 @@ GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
   from GST and Percentage "Other calculators", and from the About copy.
   The local build has 24 static pages. The repo test count is now
   **250**.
-- **Next:** deploy M15 (push `main` → Vercel) and verify production.
-  Ask before pushing.
+- **M15.5 done (local commit, not pushed):** CI pipeline
+  (`.github/workflows/ci.yml`) plus the deployment contract above.
+  Exercised on a temporary branch (pass, failing-test and type-error
+  runs), which was then deleted. Production unchanged.
+- **Next: M15.6** — push `main` (M15.1–M15.5) through the pipeline:
+  confirm CI is green on `main`, confirm Vercel's automatic Production
+  deployment, then verify production. Ask before pushing.

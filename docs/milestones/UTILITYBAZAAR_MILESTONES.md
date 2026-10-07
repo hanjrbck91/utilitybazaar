@@ -23,7 +23,8 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M15.1 Salary engine (research + pure engine) | ✅ | `71e6da8` |
 | M15.2 Salary translations (EN/HI) | ✅ | `9dea601` |
 | M15.3 Salary calculator UI + page | ✅ | `aad7056` |
-| M15.4 Salary SEO + content + integration | ✅ | see M15.4 entry |
+| M15.4 Salary SEO + content + integration | ✅ | `240b039` |
+| M15.5 CI pipeline + GitHub → Vercel contract | ✅ | see M15.5 entry |
 
 ---
 
@@ -268,3 +269,33 @@ CTC → in-hand (take-home) salary. Sub-milestones are recorded below.
   - homepage card and GST cross-link navigate correctly;
   - GST and Percentage results unchanged; no console errors.
 - Not done: deployment (not pushed).
+
+### M15.5 — CI pipeline + GitHub → Vercel contract ✅ (2026-10-07)
+- **Found:**
+  - Vercel's GitHub app already deploys every `main` push to Production
+    (18 Production deployments, all `vercel[bot]`).
+  - No GitHub Actions, no branch protection, no `vercel.json`, no secrets.
+  - Vercel project settings could not be read directly: the connector
+    returns 404 for the project, and the dashboard was not signed in.
+- **Added:** `.github/workflows/ci.yml`. It runs on every branch push
+  and on fork PRs: Node 22.x with npm cache → `npm ci` → `npm test` →
+  `npm run lint` → `npm run build`. The build is the TypeScript gate:
+  `next build` runs the full-project `tsc`, which was verified with a
+  deliberate type error.
+- **No Vercel change, no secrets, no manual deployment.**
+- **Exercised on temporary branch `ci-test/m15-5`** (based on
+  `origin/main`, workflow only; deleted afterwards):
+  - `a572362`, workflow only: CI **success** (~43 s); Vercel Preview
+    deployed;
+  - `6c04843`, deliberately failing test: CI **failure** at Test, later
+    steps skipped;
+  - `f895f73`, deliberate type error in a test file: Test/Lint pass,
+    **Build fails**, and Vercel's Preview build fails too.
+  - Production was untouched: the latest Production deployment is still
+    `6bab0d9`, `/en/salary-calculator` 404, sitemap 9 URLs.
+- Local, after the change: 250/250 tests, lint clean, `tsc` clean, build
+  clean (24 static pages).
+- Docs: the deployment contract is in the architecture doc ("Deployment
+  pipeline") and in Current State.
+- **Not done (on purpose):** no push to `main`, no deployment.
+

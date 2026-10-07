@@ -27,8 +27,9 @@ milestone that says so:
 | Framework | Next.js 16.3.8 (App Router) — see `AGENTS.md`: this version differs from older Next.js; read `node_modules/next/dist/docs/` before changing framework-level code |
 | UI | React 19.2, Tailwind CSS 4, `lucide-react` icons |
 | Language | TypeScript |
-| Tests | `node:test` running `.ts` directly (`npm test`), **Node ≥ 22.6** (verified on 22.23.3); 149 tests |
-| Hosting | Vercel, deployed from GitHub `main` |
+| Tests | `node:test` running `.ts` directly (`npm test`), **Node ≥ 22.6** (verified on 22.23.3); 250 tests |
+| CI | GitHub Actions (`.github/workflows/ci.yml`), verification only |
+| Hosting | Vercel, deployed automatically from GitHub by Vercel's Git integration |
 
 ## Directory map
 
@@ -164,3 +165,79 @@ natural point to decide whether to merge them.
 | `NEXT_PUBLIC_SITE_URL` | Origin for canonicals, OG, sitemap, robots | `https://utilitybazaar.in` |
 | `NEXT_PUBLIC_GA_ID` | GA4; empty = no script, no cookies | unset |
 | `NEXT_PUBLIC_ADSENSE_CLIENT_ID` | AdSense; empty = no ad markup | unset |
+
+## Deployment pipeline
+
+Established in M15.5 (2026-10-07). Everything below was observed, not
+assumed, unless marked **unverified**.
+
+```
+local: npm test · npm run lint · npm run build
+  → git commit → git push (feature branch)
+      → GitHub Actions CI (verify)      ┐ both run independently
+      → Vercel Preview deployment       ┘ on every branch push
+  → (optional PR, review) → merge / push main
+      → GitHub Actions CI (verify)
+      → Vercel Production deployment → utilitybazaar.in
+```
+
+### Roles
+| Piece | Role |
+|---|---|
+| GitHub `hanjrbck91/utilitybazaar` | Source of truth. `main` = production source. |
+| GitHub Actions | Verification only. No secrets, no deploy step. |
+| Vercel project `utility-bazaar` (team `muhammedhhadhilcmr-3497s-projects`, Hobby) | Deploys automatically from Git. |
+
+**Rule:** no manual Vercel deployments: no dashboard Deploy/Redeploy, no
+`vercel` CLI deploys, no deploy hooks. Production changes only by
+pushing `main`.
+
+### CI (`.github/workflows/ci.yml`)
+- **Triggers:** `push` to any branch (so feature branches are verified
+  without a PR, and `main` on every push), plus `pull_request`. The job
+  is skipped for same-repo PRs because the push run already reports on
+  the PR's head commit; it runs only for fork PRs. So there are no duplicate runs.
+- **Steps:** `actions/checkout@v7` → `actions/setup-node@v7`
+  (`node-version: 22.x`, `cache: npm`) → `npm ci` → `npm test` →
+  `npm run lint` → `npm run build`.
+- **No separate `tsc` step:** `next build` (16.3.8) runs the
+  project-local `tsc` over the whole tsconfig project, test files
+  included, and fails with "Failed to type check". This was checked locally
+  and in CI with a deliberate type error in a `.test.ts` file.
+- `permissions: contents: read`; `concurrency` cancels superseded runs
+  on the same ref; `NEXT_TELEMETRY_DISABLED=1`; 15-minute timeout.
+- **Node 22:** `npm test` needs native TS type stripping (≥ 22.6). Next
+  16.3.8 itself needs ≥ 20.9. CI resolves the latest 22.x.
+- **Environment:** no secrets. `NEXT_PUBLIC_SITE_URL` comes from the
+  committed `.env.production` (a public origin). GA/AdSense stay unset.
+- About 45 s per run on `ubuntu-latest`. GitHub notes that the label moves to Ubuntu 26
+  from 2026-10-19; nothing here depends on the Ubuntu version.
+
+### Vercel behaviour (observed via GitHub deployments and commit statuses)
+- Connected to `hanjrbck91/utilitybazaar` through the Vercel GitHub
+  app (`vercel[bot]`). All 18 Production deployments up to M15.5
+  were created by it from `main` commits, including docs-only pushes.
+- **Production branch = `main`:** every `main` push created a
+  "Production" deployment automatically.
+- **Previews:** a non-`main` branch push created a "Preview" deployment
+  (M15.5 test branch: 3 Preview deployments, no Production change).
+  Previews are served on `*.vercel.app`, where `next.config.ts` adds
+  `X-Robots-Tag: noindex`.
+- Vercel posts a `Vercel` commit status. Its own build also failed on
+  the deliberate type error, so a build/type failure can't reach
+  Production. Test or lint failures can, because Vercel doesn't run
+  them and doesn't wait for CI.
+- No `vercel.json`. Framework preset/root directory: repo root, Next.js
+  (`next build` output), the app's `package.json` is at the repo root.
+- **Unverified (no access in M15.5):** the Vercel connector available
+  in-session cannot see the project (404) and the dashboard was not signed in.
+  So build/install command overrides, the Node.js version setting, the
+  dashboard environment variables and Preview deployment protection
+  were not read directly. Behaviour above shows the effective setup
+  works; confirm the settings in the dashboard when convenient.
+
+### GitHub settings
+- `main` is **not protected**. No required status checks, so CI reports
+  but does not block. Making CI a gate (branch protection requiring the
+  `verify` check) is optional deferred work.
+- No GitHub secrets are needed or used.

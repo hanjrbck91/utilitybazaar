@@ -1,0 +1,53 @@
+# Verification gate. GitHub Actions only verifies; Vercel's Git integration
+# deploys (main → Production, other branches → Preview). This workflow
+# needs no secrets and never deploys.
+name: CI
+
+on:
+  # Every branch push, so a feature branch is verified before any PR exists
+  # and main is verified on every push.
+  push:
+    branches: ["**"]
+  # Same-repo PRs already get the push run's result on their head commit,
+  # so the job below only runs for pull_request events from forks.
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v7
+
+      # Node ≥ 22.6 is required: `npm test` runs `node --test` on .ts files
+      # using native type stripping.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install (lockfile)
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Lint
+        run: npm run lint
+
+      # `next build` type-checks the whole tsconfig project (tests included)
+      # with the project-local tsc and fails on any type error, so there is
+      # no separate `tsc --noEmit` step. NEXT_PUBLIC_SITE_URL comes from the
+      # committed .env.production.
+      - name: Build (includes TypeScript check)
+        run: npm run build
