@@ -24,7 +24,7 @@ milestone that says so:
 
 | Layer | Choice |
 |---|---|
-| Framework | Next.js 16.3 (App Router) — see `AGENTS.md`: this version differs from older Next.js; read `node_modules/next/dist/docs/` before changing framework-level code |
+| Framework | Next.js 16.3.8 (App Router) — see `AGENTS.md`: this version differs from older Next.js; read `node_modules/next/dist/docs/` before changing framework-level code |
 | UI | React 19.2, Tailwind CSS 4, `lucide-react` icons |
 | Language | TypeScript |
 | Tests | `node:test` running `.ts` directly (`npm test`), **Node ≥ 22.6** (verified on 22.23.3); 149 tests |

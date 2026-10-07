@@ -18,6 +18,7 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M14.4.2 Test / Lint / Build | ✅ | N/A (no fixes needed) |
 | M14.4.3 Production Verification | ✅ | deployed `7aa19ef` |
 | **UtilityBazaar Foundation** | 🔒 **FROZEN** 2026-10-06 | `7aa19ef` + docs |
+| M14.5 Next.js Security Maintenance | ✅ | `3376302` |
 | M15 Salary Calculator | 🔜 | — |
 
 ---
@@ -85,6 +86,25 @@ foundation, EN/HI structure, static pages. At freeze: 149/149 tests,
 lint clean, build clean, production verified.
 Rules: no feature changes to the foundation. Deferred items live in
 `UTILITYBAZAAR_CURRENT_STATE.md`.
+
+## M14.5 — Next.js Security Maintenance ✅ `3376302` (2026-10-07)
+- **Status:** COMPLETE. The foundation stays frozen; this was a
+  dependency-only change.
+- **Version:** `next` 16.3.3 → 16.3.8. It fixes GHSA-vcvr-r3jv-pc5j
+  (critical, RCE in `next/og`), which was not exploitable here.
+- **Changed:** `package.json` (1 line) and the lockfile entries for
+  `next`, `@next/env` and `@next/swc-*` only. `eslint-config-next` stays
+  16.3.3. No audit fixes; the lockfile `libc` fields are preserved.
+- **Tests:** 149/149 · **Lint:** clean · **Build:** clean (20 static
+  pages, no warnings) on Node 22.23.3.
+- **Production:** VERIFIED. Deployment of `3376302` succeeded, and the
+  live client reports Next 16.3.8. All routes are correct, and both
+  calculators work in EN/HI, including copy and the FAQ. SEO, hreflang,
+  JSON-LD, sitemap and robots are unchanged; no console errors.
+- **Note:** a parallel background session produced a broader upgrade
+  (adding `eslint-config-next` and audit fixes). It was not used. Its
+  local commit `ce44dcf` is kept only on the local branch
+  `backup/bg-next-upgrade`, which was never pushed.
 
 ## M15 — Salary Calculator 🔜
 Next milestone. Not started. See "Adding a new tool" in the architecture doc.
