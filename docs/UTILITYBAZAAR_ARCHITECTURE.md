@@ -39,7 +39,8 @@ src/
 │   │   ├── layout.tsx            # validates locale, prerenders en + hi
 │   │   ├── page.tsx              # tools hub (homepage)
 │   │   ├── gst-calculator/       # page.tsx + opengraph-image.tsx
-│   │   └── percentage-calculator/
+│   │   ├── percentage-calculator/
+│   │   └── salary-calculator/    # page.tsx only (provisional metadata, noindex) — M15.3
 │   ├── (site)/                   # English-only static pages
 │   │   ├── layout.tsx
 │   │   └── about/ privacy/ terms/
@@ -48,12 +49,13 @@ src/
 ├── components/
 │   ├── gst-calculator/           # GST-only UI
 │   ├── percentage-calculator/    # Percentage-only UI
+│   ├── salary-calculator/        # Salary-only UI; model.ts is its only engine caller
 │   ├── home/ToolsList.tsx        # homepage catalogue
 │   ├── StaticPage.tsx            # shell for about/privacy/terms
 │   └── …                         # shared: Faq, CopyButton, AdSlot, Analytics,
 │                                 #   LanguageToggle, LocaleProvider, OtherCalculators, …
 ├── lib/
-│   ├── gst/, percentage/         # per-tool engine, math, validate, format (+ tests)
+│   ├── gst/, percentage/, salary/ # per-tool engine, math, validate, format (+ tests)
 │   ├── i18n/                     # locales, dictionary lookup, interpolate()
 │   ├── seo/                      # metadata.ts, jsonld.ts, sitemap.ts (+ tests)
 │   ├── routes.ts                 # every path in one place
@@ -66,6 +68,7 @@ src/
     ├── home.ts                   # homepage
     ├── gst-calculator.ts
     ├── percentage-calculator.ts
+    ├── salary-calculator.ts
     └── index.ts                  # composes the dictionaries
 ```
 
@@ -88,8 +91,20 @@ sitemap, canonicals, hreflang maps and in-app links all import from it.
 - Each locale has separate dictionaries for the GST tool, the
   Percentage tool, the Salary tool and the homepage (`getDictionary`,
   `getPercentageDictionary`, `getSalaryDictionary`, `getHomeDictionary`).
-  An unknown locale falls back to English. The Salary dictionary exists,
-  but no page uses it yet (M15.2).
+  An unknown locale falls back to English.
+
+### Salary UI: view-model boundary (M15.3)
+`components/salary-calculator/model.ts` is plain TypeScript, with no
+React. It is the **only** UI module that calls the salary engine. It:
+- parses the form's raw strings with the engine's own validators;
+- calls `tryCalculateSalary`;
+- turns the `SalaryBreakdown` into formatted rows, notices and localized
+  messages.
+
+Components only lay those out. `model.test.ts` checks this with a guard
+that fails if any other salary UI file calls an engine function. Form
+defaults come from engine constants (`DEFAULT_PF_WAGES_PERCENT`,
+`DEFAULT_PF_MODE`), never from UI literals.
 - Static pages are English-only, so they get a canonical URL but no
   hreflang alternates.
 

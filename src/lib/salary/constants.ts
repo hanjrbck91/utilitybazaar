@@ -8,6 +8,8 @@
  * note and the tests together.
  */
 
+import type { PfMode } from "./types.ts";
+
 /** Tax year these income-tax values apply to (Income-tax Act, 2025). */
 export const TAX_YEAR = "2026-27";
 
@@ -78,6 +80,9 @@ export const PROFESSIONAL_TAX_MAX_ANNUAL = 2_500;
 
 /** Default PF wages (Basic + DA) as % of fixed CTC — estimation default. */
 export const DEFAULT_PF_WAGES_PERCENT = STATUTORY_WAGE_FLOOR_PERCENT;
+
+/** Default PF mode: 12% of full PF wages (the market convention). */
+export const DEFAULT_PF_MODE: PfMode = "full";
 
 /** Largest CTC the engine accepts: ₹10 crore a year. */
 export const MAX_ANNUAL_CTC = 10_00_00_000;

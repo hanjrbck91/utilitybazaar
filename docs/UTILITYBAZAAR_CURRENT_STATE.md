@@ -102,4 +102,12 @@ GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
 - **M15.2 done:** EN/HI salary dictionaries (`enSalary` / `hiSalary`,
   `getSalaryDictionary()`). These aren't used by any page yet. The repo
   test count is now **221**.
-- **Next:** M15.3. Follow "Adding a new tool" in the architecture doc.
+- **M15.3 done (local only, not deployed):** the salary page exists at
+  `/{en,hi}/salary-calculator`. It works end to end, but has **provisional
+  metadata with `noindex`**, is not in the sitemap, and isn't linked from
+  the homepage or the other tools yet. The local build has 22 static pages
+  (production still has 20). The repo test count is now **243**.
+- **Next:** M15.4, the salary page's SEO (title/description, canonical,
+  hreflang, OG, JSON-LD, sitemap, final content and FAQ, remove
+  `noindex`). Then integration (homepage, cross-links, About) and
+  deployment.

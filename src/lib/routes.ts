@@ -23,6 +23,14 @@ export function percentageCalculatorPath(locale: Locale): string {
   return `/${locale}/percentage-calculator`;
 }
 
+/**
+ * The Salary Calculator, localized. Not yet in {@link indexablePaths} or
+ * the sitemap — the page joins those with its SEO milestone (M15.4).
+ */
+export function salaryCalculatorPath(locale: Locale): string {
+  return `/${locale}/salary-calculator`;
+}
+
 /** Supporting pages. Not localized — they are short and English-only for now. */
 export const STATIC_PATHS = {
   about: "/about",

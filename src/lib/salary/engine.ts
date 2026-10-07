@@ -1,4 +1,5 @@
 import {
+  DEFAULT_PF_MODE,
   DEFAULT_PF_WAGES_PERCENT,
   GRATUITY_DAYS,
   GRATUITY_MONTH_DIVISOR,
@@ -77,7 +78,7 @@ export function calculateSalary(input: SalaryInput): SalaryBreakdown {
     validatePfWagesPercent(input.pfWagesPercent ?? DEFAULT_PF_WAGES_PERCENT),
     "pfWagesPercent",
   );
-  const pfMode = input.pfMode ?? "full";
+  const pfMode = input.pfMode ?? DEFAULT_PF_MODE;
   if (!isPfMode(pfMode)) {
     throw new SalaryError("INVALID_PF_MODE", "pfMode", "PF mode must be full, capped or none.");
   }

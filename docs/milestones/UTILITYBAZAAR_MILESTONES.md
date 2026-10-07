@@ -21,7 +21,8 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M14.5 Next.js Security Maintenance | ✅ | `3376302` |
 | M15 Salary Calculator | 🔄 | — |
 | M15.1 Salary engine (research + pure engine) | ✅ | `71e6da8` |
-| M15.2 Salary translations (EN/HI) | ✅ | see M15.2 entry |
+| M15.2 Salary translations (EN/HI) | ✅ | `9dea601` |
+| M15.3 Salary calculator UI + page | ✅ | see M15.3 entry |
 
 ---
 
@@ -159,3 +160,63 @@ CTC → in-hand (take-home) salary. Sub-milestones are recorded below.
   missing error code fails `tsc`.
 - Tests 212 → **221**, lint clean, `tsc` clean, build clean (20 pages).
 - Not yet built: UI, route, SEO and integration.
+
+### M15.3 — Salary calculator UI + page ✅ (2026-10-07)
+- **Route:** `/en/salary-calculator` and `/hi/salary-calculator`
+  (`app/[locale]/salary-calculator/page.tsx`), using the same layout as
+  the other calculators: header → calculator → breakdown → other
+  calculators → ad slot → supporting content → FAQ → footer.
+- **UX:**
+  - Annual CTC is the only required input, with an "= 12 lakh a year"
+    echo.
+  - Monthly in-hand appears directly under it, live, with no Calculate
+    button. Annual take-home, regular month, tax regime and estimate are
+    shown with it.
+  - Variable pay %, Basic + DA % and PF mode follow. Gratuity and
+    professional tax sit under "More options".
+  - The breakdown shows CTC → parts not paid monthly → gross →
+    deductions → take-home, monthly and yearly.
+  - The tax working (slabs, rebate, surcharge, marginal relief, cess)
+    sits behind a toggle.
+  - The assumptions list is always visible and includes a notice for
+    each engine flag.
+  - Copy copies only the monthly in-hand amount, using the shared
+    `CopyButton`.
+- **Engine stays the single source of truth:**
+  - `components/salary-calculator/model.ts` (pure) is the only engine
+    caller.
+  - `DEFAULT_PF_MODE` moved into `lib/salary/constants.ts` so the UI
+    doesn't duplicate it. Engine behaviour is unchanged.
+- **Small, safe integration:**
+  - `salaryCalculatorPath()` added to `routes.ts`. It is **not** in
+    `indexablePaths()` or the sitemap (still 9 URLs).
+  - Minimal `content` (section titles, privacy note, 3 FAQs) and
+    `calculator.clear` added to the EN/HI dictionaries. Section bodies
+    reuse `explain` strings.
+- **Provisional metadata only:** title and description from the
+  dictionary, with `robots: noindex`. There's no canonical, hreflang,
+  OG, JSON-LD, sitemap entry or OG image yet. **M15.4 must replace this
+  and remove `noindex`.**
+- **Tests:** 221 → **243** (+22 in `model.test.ts`):
+  - every view equals a direct engine result;
+  - engine error codes map to the right field and message;
+  - rows, tax rows and notices show the engine's own figures;
+  - no placeholder is left unfilled in either language;
+  - a guard checks that no other UI file calls the engine.
+- **Browser-verified** on a local production build (`next start`):
+  - Both routes work, and an unknown locale returns 404.
+  - Empty state, live updates, all three PF modes, variable pay,
+    gratuity, professional tax, tax working and notices all behave
+    correctly, and the figures match direct engine calls.
+  - Error states: CTC 0, too large, variable 100%, professional tax
+    ₹3,000.
+  - Escape clears the CTC field, and copy works (clipboard stubbed in
+    the test pane).
+  - Hindi on a 375px viewport: no horizontal overflow (a breakdown
+    column overflow was found and fixed).
+  - Desktop layout checked; no console errors.
+  - GST, Percentage and the homepage are unchanged.
+- Lint clean, `tsc` clean, build clean (**22** static pages: 20 + 2
+  salary).
+- Not yet built: final SEO/content and FAQ (M15.4), homepage and
+  cross-link integration, deployment.

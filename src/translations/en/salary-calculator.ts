@@ -9,8 +9,9 @@
  * `{placeholders}` by `interpolate()`, so they stay identical across
  * locales and change in one place when the law does.
  *
- * `seo` and `content` (supporting copy, FAQ) are added with the page's
- * SEO milestone, not here.
+ * `content` holds the minimum the page needs (section titles — whose
+ * bodies reuse `explain` — and a short FAQ); the SEO milestone (M15.4)
+ * finalises it and adds `seo`.
  */
 export const salaryCalculator = {
   app: {
@@ -25,6 +26,7 @@ export const salaryCalculator = {
     ctcHint: "Your yearly cost to company, as written on your offer letter.",
     ctcPlaceholder: "e.g. 12,00,000",
     ctcInLakhs: "= {lakhs} lakh a year",
+    clear: "Clear",
 
     advanced: "More options",
     advancedHint: "Optional. Change these only if your offer letter says something different.",
@@ -164,5 +166,36 @@ export const salaryCalculator = {
   fieldErrors: {
     variablePayPercent: "Variable pay can't be negative, and must be less than your whole CTC.",
     pfWagesPercent: "Basic + DA must be more than zero, and can't be more than your fixed CTC.",
+  },
+
+  content: {
+    heading: "About CTC and in-hand salary",
+    ctcTitle: "CTC is not your monthly salary",
+    notMonthlyTitle: "Why CTC ÷ 12 is not your take-home",
+    pfTitle: "What PF does to your salary",
+    variableTitle: "Variable pay: yearly, not monthly",
+    estimateTitle: "Why this is an estimate",
+
+    assumptionsHeading: "What this result assumes",
+
+    privacyNote:
+      "Everything is worked out in your browser — nothing you enter is sent to a server or saved.",
+    privacyLinkText: "Read the privacy policy →",
+
+    faqHeading: "Common questions",
+    faq: [
+      {
+        q: "Why is my in-hand salary less than my CTC divided by 12?",
+        a: "CTC includes money that is not paid to you as monthly salary, such as the employer's PF, gratuity and variable pay. Your own PF, professional tax and income tax are then deducted from what is left.",
+      },
+      {
+        q: "Is income tax included in this result?",
+        a: "Yes. Income tax is worked out under the new tax regime, which is the default for salaried people, and spread evenly over the year as TDS.",
+      },
+      {
+        q: "How is PF worked out?",
+        a: "PF is a share of your Basic + DA. Your employer puts in the same amount as you, and that part is counted inside your CTC. If your offer letter doesn't show Basic + DA, the calculator estimates it.",
+      },
+    ],
   },
 };
