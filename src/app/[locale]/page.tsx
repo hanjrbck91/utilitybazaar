@@ -72,7 +72,7 @@ export default async function HomePage({
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildWebSiteJsonLd()) }}
       />
       <LocaleProvider initialLocale={locale} dictionary={getHomeDictionary(locale)}>
-        <PageHeader languageHrefs={languageHrefs} />
+        <PageHeader languageHrefs={languageHrefs} isHome />
         <ToolsList />
         <SiteFooter />
       </LocaleProvider>
