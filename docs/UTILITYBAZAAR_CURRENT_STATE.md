@@ -4,7 +4,7 @@
 > History: [milestones/UTILITYBAZAAR_MILESTONES.md](milestones/UTILITYBAZAAR_MILESTONES.md) ·
 > Code structure: [UTILITYBAZAAR_ARCHITECTURE.md](UTILITYBAZAAR_ARCHITECTURE.md)
 
-**Updated:** 2026-10-07 · **Status:** 🔒 **FOUNDATION FROZEN** (+ M14.5 security maintenance) · ✅ **M15 Salary Calculator live** (M15.6, `3840520`) · **Next:** not yet defined (M15.7 not started)
+**Updated:** 2026-10-08 · **Status:** 🔒 **FOUNDATION FROZEN** (+ M14.5 security maintenance) · ✅ **M15 Salary Calculator live** (M15.6, `3840520`) · 🔄 **M15.7** nav fix committed locally (`3c38736`, not pushed) + SEO diagnostic · **Next:** release M15.7, then Search Console baseline
 
 ## What UtilityBazaar is
 An India-focused, bilingual (English/Hindi) site of small, free calculators.
@@ -166,3 +166,16 @@ GHSA-vcvr-r3jv-pc5j (RCE in `next/og` `ImageResponse`). Done in M14.5,
   automatically (vercel[bot], 06:02 UTC). No manual deployment.
   Production verification is in the milestones entry.
 - **Next:** not defined yet. M15.7 has not been started.
+
+## In progress: M15.7 — UX navigation + SEO diagnostic
+- **UX (`3c38736`, local, not pushed):** calculator headers now show a
+  "UtilityBazaar" link to the localized homepage (`/en` or `/hi`) beside
+  the language switch. Homepage header unchanged. 250/250 tests, lint and
+  build clean; browser-verified EN/HI, desktop and 375px.
+- **SEO diagnostic:** [milestones/M15.7_SEO_DIAGNOSTIC.md](milestones/M15.7_SEO_DIAGNOSTIC.md).
+  Not technically broken, indexed fast, but no ranking in the top ~40–50
+  for head terms. The domain was registered 2026-08-28 (it was a Shopify
+  store 2021–23) and has no visible links. Search Console is not
+  connected; that data is the next step.
+- **Owner action (Vercel dashboard):** `www.utilitybazaar.in` serves 200
+  duplicates; set it to redirect to the apex.

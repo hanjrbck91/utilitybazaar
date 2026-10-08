@@ -26,6 +26,7 @@ Key: ✅ complete · 🔄 in progress · 🔜 planned · 🔒 frozen
 | M15.4 Salary SEO + content + integration | ✅ | `240b039` |
 | M15.5 CI pipeline + GitHub → Vercel contract | ✅ | `3840520` |
 | M15.6 Controlled production release | ✅ | `3840520` (released) |
+| M15.7 UX navigation + SEO diagnostic | 🔄 committed, not released | `3c38736` |
 
 ---
 
@@ -351,3 +352,26 @@ Release only. There were no code changes.
   - The `ubuntu-latest` runner moves to Ubuntu 26 on 2026-10-19.
 - **Verdict: RELEASE SUCCESS.**
 
+
+## M15.7 — UX navigation + SEO diagnostic 🔄 (2026-10-08)
+- **UX `3c38736`:** the shared `PageHeader` shows a site bar on tool
+  pages: a `SITE_NAME` link to `homePath(locale)` on the left and the
+  language switch on the right, with the tool's H1 below. The homepage
+  passes `isHome` and keeps its old header. No breadcrumb, because the
+  H1 under the brand already names the page. No dictionary change
+  (the i18n tests reject an untranslated brand string, so `SITE_NAME` is
+  used instead).
+- **Verified (local `next start`):**
+  - home → each tool → brand → home, in EN and HI;
+  - language switch on a tool keeps the tool, and the brand follows the
+    locale;
+  - no horizontal overflow at 375px on 8 pages + About;
+  - GST ₹1,000 @18% = ₹1,180, Percentage 15% of 200 = 30 (HI), Salary
+    ₹18L = ₹1,21,305.33;
+  - no console errors.
+  - Tests 250/250, lint clean, build 24 pages.
+- **SEO diagnostic:** [M15.7_SEO_DIAGNOSTIC.md](M15.7_SEO_DIAGNOSTIC.md).
+  The funnel breaks at Ranking (not Discovery or Indexing). The likely
+  cause is a new domain with no authority in head-term SERPs owned by
+  fintechs. No SEO changes were made.
+- Not done: push/release; Search Console (not connected).
